@@ -10,7 +10,7 @@ WORKDIR /
 RUN <<-EOF
     set -ex
     apk add -U curl
-    arch='${TARGETPLATFORM/linux\//}'
+    arch=$(echo $TARGETPLATFORM | cut -d/ -f2)}
     curl -sLo otel.tar.gz "${BASE_URL}/releases/download/v${OTEL_VERSION}/otelcol_${OTEL_VERSION}_linux_${arch}.tar.gz"
     tar zxvf otel.tar.gz
     rm otel.tar.gz
