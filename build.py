@@ -43,7 +43,7 @@ class Image:
 
     @classmethod
     def load_from_dockerfile(cls, name, path: Path) -> "Image":
-        if path.suffixe != ".Dockerfile":
+        if path.suffix != ".Dockerfile":
             raise ValueError(f"{path} is not a Dockerfile")
         version = cls.parse_version(path.read_text())
         return cls(name, version, path)
