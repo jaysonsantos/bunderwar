@@ -55,13 +55,14 @@ class Image:
     def build(cls, push):
         full_tag = f"{REPOSITORY}:{cls.name}-{cls.version}"
         platforms = ",".join(PLATFORMS)
-        build_command = f"docker buildx build --push --tag {full_tag} -f {cls.dockerfile} --platform {platforms} ."
+        push_arg = "--push" if push else ""
+        build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {cls.dockerfile} --platform {platforms} ."
         print(f"Building with {build_command!r}")
 
         check_call(args=shlex.split(build_command))
 
 
-def build(images):
+def build(images, push: bool):
     for image in get_images(images):
         if not image.version:
             print(
@@ -69,12 +70,15 @@ def build(images):
             )
             continue
         print(f"Building {image}")
-        image.build()
+        image.build(push)
 
 
 def get_images(names) -> Iterator[Image]:
     for name in names or all_images():
-        yield Image.load(name)
+        try:
+            yield Image.load(name)
+        except Exception as e:
+            print(f"Skipping {name} because {e}")
 
 
 def all_images():
