@@ -1,0 +1,31 @@
+name: Images
+on:
+  push:
+    branches: [main, staging, trying]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get changed files using a comma separator
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          separator: " "
+      - name: Install python
+        uses: actions/setup-python@v2
+      - name: Set push mode
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
+      - name: Log in to the Container registry
+        uses: docker/login-action@1cce1654e01caa87cc0eac1c100e6749708affb9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker buildx create --use
+      - name: Run
+        run: python3 build.py ${{ steps.changed-files.outputs.all_modified_files }}
