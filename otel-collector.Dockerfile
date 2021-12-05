@@ -14,8 +14,7 @@ RUN <<-EOF
     curl -sLo otel.tar.gz "${BASE_URL}/releases/download/v${OTEL_VERSION}/otelcol_${OTEL_VERSION}_linux_${arch}.tar.gz"
     tar zxvf otel.tar.gz
     rm otel.tar.gz
-    exit 1
-    EOF
+EOF
 
 FROM debian:stable-20211201-slim
 COPY --from=builder /otelcol /usr/local/bin/
