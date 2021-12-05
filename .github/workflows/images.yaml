@@ -18,7 +18,7 @@ jobs:
       - name: Install python
         uses: actions/setup-python@v2
       - name: Set push mode
-        if: ${{ github.ref == "refs/heads/main" }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
       - name: Run
         run: python3 build.py ${{ steps.changed-files.outputs.all_modified_files }}
