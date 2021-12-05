@@ -50,8 +50,14 @@ class Image:
 
     @classmethod
     def parse_version(cls, contents) -> Optional[str]:
+        """
+        >>> Image.parse_version("ENV OTEL_VERSION 0.39.0")
+        '0.39.0'
+        >>> Image.parse_version("ENV OTEL_VERSION v0.39.0")
+        '0.39.0'
+        """
         if match := cls._version_re.search(contents):
-            return match.group(1)
+            return match.group(1).replace("v", "")
         return None
 
     def build(cls, push):
