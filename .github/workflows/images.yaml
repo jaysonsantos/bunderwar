@@ -20,5 +20,6 @@ jobs:
       - name: Set push mode
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
+      - run: docker buildx create --use
       - name: Run
         run: python3 build.py ${{ steps.changed-files.outputs.all_modified_files }}
