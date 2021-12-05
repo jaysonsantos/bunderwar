@@ -52,7 +52,7 @@ class Image:
             return match.group(1)
         return None
 
-    def build(cls):
+    def build(cls, push):
         full_tag = f"{REPOSITORY}:{cls.name}-{cls.version}"
         platforms = ",".join(PLATFORMS)
         build_command = f"docker buildx build --push --tag {full_tag} -f {cls.dockerfile} --platform {platforms} ."
