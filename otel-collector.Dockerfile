@@ -18,3 +18,4 @@ EOF
 
 FROM debian:stable-20211201-slim
 COPY --from=builder /otelcol /usr/local/bin/
+
