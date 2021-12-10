@@ -21,6 +21,6 @@ EOF
 
 FROM debian:stable-20211201-slim
 ARG TARGETPLATFORM
-COPY --from=builder /build/${TARGETPLATFORM}/go-httpbin /usr/local/bin/
+COPY --from=builder --chmod=755 /build/${TARGETPLATFORM}/go-httpbin /usr/local/bin/
 
 ENTRYPOINT [ "/usr/local/bin/go-httpbin" ]
