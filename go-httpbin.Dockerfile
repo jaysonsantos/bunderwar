@@ -16,7 +16,7 @@ RUN <<-EOF
     curl -sLo project.tar.gz "${BASE_URL}/archive/refs/tags/${PROJECT_VERSION}.tar.gz"
     tar zxvf project.tar.gz --strip-components=1 ${PROJECT_NAME}-$(echo $PROJECT_VERSION | sed 's/^v//')/
     rm project.tar.gz
-    GOOS=linux GOARCH=$arch go build -o ${TARGETPLATFORM}/${PROJECT_NAME} ./cmd/maincmd
+    CGO_ENABLED=0 GOOS=linux GOARCH=$arch go build -o ${TARGETPLATFORM}/${PROJECT_NAME} ./cmd/go-httpbin
 EOF
 
 FROM debian:stable-20211201-slim
