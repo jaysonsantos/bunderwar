@@ -15,7 +15,7 @@ RUN <<-EOF
     chmod +x cloudflared
 EOF
 
-FROM debian:stable-20211201-slim
+FROM gcr.io/distroless/static
 COPY --from=builder /cloudflared /usr/local/bin/
 
 CMD [ "/usr/local/bin/cloudflared" ]
