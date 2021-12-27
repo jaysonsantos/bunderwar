@@ -16,7 +16,7 @@ RUN <<-EOF
     rm otel.tar.gz
 EOF
 
-FROM debian:stable-20211201-slim
+FROM gcr.io/distroless/static
 COPY --from=builder /otelcol /usr/local/bin/
 
 CMD [ "/usr/local/bin/otelcol" ]
