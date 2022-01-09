@@ -11,7 +11,6 @@ RUN <<-EOF
     set -ex
     apk add -U curl
     arch=$(echo $TARGETPLATFORM | cut -d/ -f2)
-    https://github.com/OT-CONTAINER-KIT/redis-operator/archive/refs/tags/v0.9.0.tar.gz
     curl -sLo operator.tar.gz "${BASE_URL}/archive/refs/tags/${OPERATOR_VERSION}.tar.gz"
     tar zxvf operator.tar.gz
     rm operator.tar.gz
