@@ -11,7 +11,7 @@ RUN <<-EOF
     set -ex
     apk add -U curl
     arch=$(echo $TARGETPLATFORM | cut -d/ -f2)
-    curl -sLo operator.tar.gz "${BASE_URL}/archive/refs/tags/${OPERATOR_VERSION}.tar.gz"
+    curl -sLo operator.tar.gz --strip-components=1 "${BASE_URL}/archive/refs/tags/${OPERATOR_VERSION}.tar.gz"
     tar zxvf operator.tar.gz
     rm operator.tar.gz
     CGO_ENABLED=0 GOOS=linux GOARCH=$arch go build -a -o ${TARGETPLATFORM}/${PROJECT_NAME} main.go
