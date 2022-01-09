@@ -19,6 +19,6 @@ EOF
 
 FROM gcr.io/distroless/static:nonroot
 ARG TARGETPLATFORM
-COPY --from=builder --chmod=755 /build/${TARGETPLATFORM}/manager /usr/local/bin/
+COPY --from=builder --chmod=755 /build/${TARGETPLATFORM}/manager /
 
-CMD [ "/usr/local/bin/manager" ]
+CMD [ "/manager" ]
