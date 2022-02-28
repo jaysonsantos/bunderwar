@@ -18,7 +18,7 @@ jobs:
         with:
           separator: " "
       - name: Install python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
       - name: Set push mode
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
