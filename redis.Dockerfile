@@ -37,3 +37,4 @@ COPY --from=builder --chmod=755 /build/${TARGETPLATFORM} /usr/local/bin/
 
 RUN ["/usr/local/bin/redis-server", "--version"]
 ENTRYPOINT [ "/usr/local/bin/redis-server" ]
+CMD ["/etc/redis/external.conf.d/redis-external.conf"]
