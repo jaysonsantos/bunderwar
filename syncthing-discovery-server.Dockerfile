@@ -2,7 +2,7 @@ FROM alpine:3.16 as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=syncthing/discosrv
-ENV DISCOVERY_VERSION v1.18.1
+ENV DISCOVERY_VERSION v1.18.6
 ENV BASE_URL https://github.com/syncthing/discosrv
 WORKDIR /
 RUN apk add -U curl
