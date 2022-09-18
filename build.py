@@ -22,15 +22,15 @@ class Image:
     version: Optional[str]
     dockerfile: Path
 
-    _version_re = re.compile(r"ENV .+?_VERSION (.*)")
+    _version_re = re.compile(r"(?:ENV|ARG) .+?_VERSION[= ](.*)")
 
     @classmethod
     def load(cls, name) -> "Image":
         """
         >>> Image.load("otel-collector")
-        Image(name='otel-collector', version='0.39.0', dockerfile=...)
+        Image(name='otel-collector', version='0.60.0', dockerfile=...)
         >>> Image.load("otel-collector.Dockerfile")
-        Image(name='otel-collector', version='0.39.0', dockerfile=...)
+        Image(name='otel-collector', version='0.60.0', dockerfile=...)
         """
         maybe_dockerfile = HERE / name
         if maybe_dockerfile.exists():
@@ -51,10 +51,14 @@ class Image:
     @classmethod
     def parse_version(cls, contents) -> Optional[str]:
         """
-        >>> Image.parse_version("ENV OTEL_VERSION 0.39.0")
-        '0.39.0'
-        >>> Image.parse_version("ENV OTEL_VERSION v0.39.0")
-        '0.39.0'
+        >>> Image.parse_version("ENV OTEL_VERSION 0.60.0")
+        '0.60.0'
+        >>> Image.parse_version("ENV OTEL_VERSION v0.60.0")
+        '0.60.0'
+        >>> Image.parse_version("ARG OTEL_VERSION=v0.60.0")
+        '0.60.0'
+        >>> Image.parse_version("ARG OTEL_VERSION v0.60.0")
+        '0.60.0'
         """
         if match := cls._version_re.search(contents):
             return match.group(1).replace("v", "")
