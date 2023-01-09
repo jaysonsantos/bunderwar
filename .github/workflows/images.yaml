@@ -26,5 +26,9 @@ jobs:
         run: |
           echo  ${{ secrets.GITHUB_TOKEN }} | docker login --username ${{ github.actor }} --password-stdin ghcr.io
       - run: docker buildx create --use
+      - name: Download latest earthly
+        run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.6.30/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
+      - name: Earthly version
+        run: earthly --version
       - name: Run
         run: python3 build.py ${{ steps.changed-files.outputs.all_modified_files }}
