@@ -88,7 +88,7 @@ class Image:
 
     def _build_earthfile(self, push_arg):
         working_directory = str(self.dockerfile.parent)
-        build_command = f"earthly{push_arg} --ci +all"
+        build_command = f"earthly {push_arg} --ci +all"
         print(f"Building with {build_command!r} in {working_directory!r}")
 
         check_call(args=shlex.split(build_command), cwd=working_directory)
