@@ -22,6 +22,8 @@ jobs:
       - name: Set push mode
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
       - name: Login to docker
         run: |
           echo  ${{ secrets.GITHUB_TOKEN }} | docker login --username ${{ github.actor }} --password-stdin ghcr.io
