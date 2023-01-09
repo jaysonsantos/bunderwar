@@ -10,6 +10,8 @@ from subprocess import check_call
 import shlex
 import re
 
+EARTHFILE = "Earthfile"
+
 PLATFORMS = {"linux/amd64", "linux/arm64"}
 HERE = Path(__file__).parent
 REPOSITORY = "ghcr.io/jaysonsantos/bunderwar"
@@ -34,19 +36,27 @@ class Image:
         """
         maybe_dockerfile = HERE / name
         if maybe_dockerfile.exists():
-            return cls.load_from_dockerfile(maybe_dockerfile.stem, maybe_dockerfile)
+            return cls.load_from_dockerfile(
+                Image.get_image_name_from_file(maybe_dockerfile), maybe_dockerfile
+            )
         return cls.load_from_name(name)
+
+    @classmethod
+    def get_image_name_from_file(cls, maybe_dockerfile):
+        if maybe_dockerfile.stem == EARTHFILE:
+            return maybe_dockerfile.parent.name
+        return maybe_dockerfile.stem
 
     @classmethod
     def load_from_name(cls, name: str) -> "Image":
         return cls.load_from_dockerfile(name, HERE / f"{name}.Dockerfile")
 
     @classmethod
-    def load_from_dockerfile(cls, name, path: Path) -> "Image":
-        if path.suffix != ".Dockerfile":
+    def load_from_dockerfile(cls, image_name, path: Path) -> "Image":
+        if not (path.suffix == ".Dockerfile" or path.name == EARTHFILE):
             raise ValueError(f"{path} is not a Dockerfile")
         version = cls.parse_version(path.read_text())
-        return cls(name, version, path)
+        return cls(image_name, version, path)
 
     @classmethod
     def parse_version(cls, contents) -> Optional[str]:
@@ -64,11 +74,27 @@ class Image:
             return match.group(1).replace("v", "")
         return None
 
-    def build(cls, push):
-        full_tag = f"{REPOSITORY}:{cls.name}-{cls.version}"
+    def build(self, push):
+        full_tag = f"{REPOSITORY}:{self.name}-{self.version}"
         platforms = ",".join(PLATFORMS)
         push_arg = "--push" if push else ""
-        build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {cls.dockerfile} --platform {platforms} ."
+
+        if self._is_earthfile():
+            return self._build_earthfile(push_arg)
+        return self._build_dockerfile(full_tag, platforms, push_arg)
+
+    def _is_earthfile(self):
+        return self.dockerfile.name == EARTHFILE
+
+    def _build_earthfile(self, push_arg):
+        working_directory = str(self.dockerfile.parent)
+        build_command = f"earthly{push_arg} +all"
+        print(f"Building with {build_command!r} in {working_directory!r}")
+
+        check_call(args=shlex.split(build_command), cwd=working_directory)
+
+    def _build_dockerfile(self, full_tag, platforms, push_arg):
+        build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
         print(f"Building with {build_command!r}")
 
         check_call(args=shlex.split(build_command))
