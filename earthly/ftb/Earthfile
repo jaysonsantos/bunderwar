@@ -1,31 +1,32 @@
 VERSION --shell-out-anywhere 0.6
-FROM ghcr.io/graalvm/graalvm-ce:ol9-java17
-ARG MOD_ID=101
-ARG MOD_VERSION=2304
+FROM alpine
+RUN apk add curl
+ARG MOD_ID
+ARG MOD_VERSION
 ARG NAME
 ARG TARGETARCH
-ARG IS_BETA=1
+ARG IS_BETA
+ARG name_suffix="$(if [ $IS_BETA = '1' ]; then echo '-beta'; fi)"
 
 install:
-    FROM ghcr.io/graalvm/graalvm-ce:ol9-java17
     ENV suffix=$(test ${TARGETARCH} = 'arm64' && echo arm/ || true)
     ENV DOWNLOAD_URL=https://api.modpacks.ch/public/modpack/${MOD_ID}/${MOD_VERSION}/server/${suffix}linux
     RUN echo Downloading from ${DOWNLOAD_URL}
     RUN curl --fail -sLo installer ${DOWNLOAD_URL} && chmod +x installer
     RUN ./installer ${MOD_ID} ${MOD_VERSION} --auto --path /mc
-    RUN rm -rf /mc/installer /mc/jre
+    RUN rm -rf /installer /mc/jre
+    WORKDIR /mc
+    RUN echo eula=true > eula.txt
+    RUN sed -i'' 's/^"jre.[^\"]*/exec "java/' ./start.sh
     SAVE ARTIFACT /mc
 
 image:
     FROM ghcr.io/graalvm/graalvm-ce:ol9-java17
     COPY +install/mc /mc
     WORKDIR /mc
-    RUN echo eula=true > eula.txt
-    RUN sed -i'' 's/^"jre.[^\"]*/exec "java/' ./start.sh
     CMD exec sh ./start.sh
     EXPOSE 25565
     VOLUME /mc/world
-    ENV name_suffix="$(if [ $IS_BETA = '1' ]; then echo '-beta'; fi)"
     SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${NAME}${name_suffix}-${MOD_VERSION}
 
 all:
