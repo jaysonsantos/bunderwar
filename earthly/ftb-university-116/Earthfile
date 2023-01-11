@@ -1,0 +1,12 @@
+VERSION --shell-out-anywhere 0.6
+
+ARG MOD_ID=90
+ARG MOD_VERSION=2232
+ARG NAME=ftb-university-116
+ARG TARGETARCH
+ARG IS_BETA=1
+
+IMPORT ../ftb
+
+all:
+    BUILD ftb+all --MOD_ID=$MOD_ID --MOD_VERSION=$MOD_VERSION --NAME=$NAME --IS_BETA=$IS_BETA
