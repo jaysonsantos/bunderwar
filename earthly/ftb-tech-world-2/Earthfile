@@ -1,0 +1,12 @@
+VERSION --shell-out-anywhere 0.6
+
+ARG MOD_ID=60
+ARG MOD_VERSION=198
+ARG NAME=ftb-tech-world-2
+ARG TARGETARCH
+ARG IS_BETA=1
+
+IMPORT ../ftb
+
+all:
+    BUILD ftb+all --MOD_ID=$MOD_ID --MOD_VERSION=$MOD_VERSION --NAME=$NAME --IS_BETA=$IS_BETA
