@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.3-labs
 
-FROM --platform=linux/amd64 golang:1.19-alpine as builder
+FROM --platform=linux/amd64 golang:1.20-alpine as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=OT-CONTAINER-KIT/redis-operator
