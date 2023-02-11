@@ -34,8 +34,8 @@ jobs:
         id: set-matrix
         run: |
           modified_files=()
-          if [ -n "${{ github.event.inputs.manual_files }}"]; then
-            modified_files+=($(ls "${{ github.event.inputs.manual_files }}" || true))
+          if [ -n "${{ github.event.inputs.manual_files }}" ]; then
+            modified_files+=($(ls "${{ github.event.inputs.manual_files }}"))
           else
             modified_files+=(${{ steps.changed-files.outputs.all_modified_files }})
           fi
