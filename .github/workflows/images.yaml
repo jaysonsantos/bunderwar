@@ -1,5 +1,11 @@
 name: Images
 on:
+  workflow_dispatch:
+    branches: [main]
+    inputs:
+      manual_files:
+        description: "Glob for images to be rebuilt"
+        required: false
   push:
     branches: [main, staging, trying]
   pull_request:
@@ -26,7 +32,14 @@ jobs:
         run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
       - name: Run
         id: set-matrix
-        run: python3 build.py --output-matrix ${{ steps.changed-files.outputs.all_modified_files }}
+        run: |
+          modified_files=()
+          if [ -n "${{ github.event.inputs.manual_files }}"]; then
+            modified_files+=($(ls "${{ github.event.inputs.manual_files }}"))
+          else
+            modified_files+=(${{ steps.changed-files.outputs.all_modified_files }})
+          fi
+          python3 build.py --output-matrix
   run-builds:
     name: run-builds
     needs: collect-files
