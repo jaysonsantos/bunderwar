@@ -111,9 +111,6 @@ def build(images, push: bool, output_matrix: bool):
             continue
         print(f"Building {image}")
         commands.append(image.get_build_command(push))
-    if not commands:
-        print("No files to run")
-        exit(0)
     run_build_commands(commands, output_matrix)
 
 
@@ -134,6 +131,9 @@ def run_build_commands(calls, output_matrix):
         return run_serial_commands(calls)
 
     matrix = dict(include=calls)
+    if not calls:
+        print("No files to run")
+        matrix = {}
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
         output.write(f"matrix={json.dumps(matrix, separators=(',',':'))}\n")
 
