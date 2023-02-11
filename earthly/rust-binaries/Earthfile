@@ -1,19 +1,32 @@
 VERSION --shell-out-anywhere 0.6
-FROM rust:1-buster
+FROM busybox
+
 ARG CRATE_VERSION
 ARG CRATE_NAME
 ARG TARGETARCH
+ARG USERARCH
+ARG INSTALL_ARGS
 
 install:
-    RUN --mount=type=cache,target=/usr/local/cargo/registry cargo install --locked ${CRATE_NAME} --version ${CRATE_VERSION}
-    RUN find /usr/local/cargo/bin
-    SAVE ARTIFACT /usr/local/cargo/bin
+    ARG TARGET_RUST_ARCH
+    FROM ghcr.io/rust-cross/rust-musl-cross:${TARGET_RUST_ARCH}-musl
+    RUN mkdir /output
+    RUN --mount=type=cache,target=/root/.cargo/registry \
+        --mount=type=cache,target=/root/staging \
+        cargo install \
+        --root /output \
+        --target-dir /root/staging \
+        --locked ${CRATE_NAME} \
+        --version ${CRATE_VERSION} \
+        ${INSTALL_ARGS}
+    RUN find /output
+    SAVE ARTIFACT /output/bin/*
     SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:earthly-crates-cache
 
 image:
-    FROM debian:buster-slim
-    COPY +install/ /usr/local/cargo/bin
-    CMD ["/usr/local/cargo/bin/${CRATE_NAME}"]
+    FROM busybox
+    ARG TARGET_RUST_ARCH="$(echo ${TARGETARCH} | sed 's/amd64/x86_64/;s/arm64/aarch64/')"
+    COPY --platform linux/$USERARCH (+install/* --TARGET_RUST_ARCH=$TARGET_RUST_ARCH) /usr/local/bin/
     SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${CRATE_NAME}-${CRATE_VERSION}
 
 all:
