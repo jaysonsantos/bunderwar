@@ -21,6 +21,9 @@ jobs:
           separator: " "
       - name: Install python
         uses: actions/setup-python@v4
+      - name: Set push mode
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
       - name: Run
         id: set-matrix
         run: python3 build.py --output-matrix ${{ steps.changed-files.outputs.all_modified_files }}
@@ -32,9 +35,6 @@ jobs:
       matrix: ${{ fromJSON(needs.collect-files.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set push mode
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Login to docker
