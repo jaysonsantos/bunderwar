@@ -5,9 +5,11 @@ on:
   pull_request:
     branches: [main]
 jobs:
-  build:
-    name: build
+  collect-files:
+    name: collect-files
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -19,6 +21,17 @@ jobs:
           separator: " "
       - name: Install python
         uses: actions/setup-python@v4
+      - name: Run
+        id: set-matrix
+        run: python3 build.py --output-matrix ${{ steps.changed-files.outputs.all_modified_files }}
+  run-builds:
+    name: run-builds
+    needs: collect-files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.collect-files.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
       - name: Set push mode
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo PUSH_IMAGE=1 >> $GITHUB_ENV
@@ -33,4 +46,10 @@ jobs:
       - name: Earthly version
         run: earthly --version
       - name: Run
-        run: python3 build.py ${{ steps.changed-files.outputs.all_modified_files }}
+        run: |
+          dir=${{ matrix.cwd }}
+          if [ -n "$dir" ]; then
+            cd "$dir"
+          fi
+
+          bash -exc "${{ join(matrix.args, ' ') }}"
