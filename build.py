@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 from os import stat
 import os
 import sys
@@ -74,7 +75,7 @@ class Image:
             return match.group(1).replace("v", "")
         return None
 
-    def build(self, push):
+    def get_build_command(self, push):
         full_tag = f"{REPOSITORY}:{self.name}-{self.version}"
         platforms = ",".join(PLATFORMS)
         push_arg = "--push" if push else ""
@@ -91,16 +92,17 @@ class Image:
         build_command = f"earthly {push_arg} --ci +all"
         print(f"Building with {build_command!r} in {working_directory!r}")
 
-        check_call(args=shlex.split(build_command), cwd=working_directory)
+        return dict(args=shlex.split(build_command), cwd=working_directory)
 
     def _build_dockerfile(self, full_tag, platforms, push_arg):
         build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
         print(f"Building with {build_command!r}")
 
-        check_call(args=shlex.split(build_command))
+        return dict(args=shlex.split(build_command))
 
 
-def build(images, push: bool):
+def build(images, push: bool, output_matrix: bool):
+    commands = []
     for image in get_images(images):
         if not image.version:
             print(
@@ -108,7 +110,8 @@ def build(images, push: bool):
             )
             continue
         print(f"Building {image}")
-        image.build(push)
+        commands.append(image.get_build_command(push))
+    run_build_commands(commands, output_matrix)
 
 
 def get_images(names) -> Iterator[Image]:
@@ -123,5 +126,27 @@ def all_images():
     return glob.glob("**/*.Dockerfile", recursive=True)
 
 
+def run_build_commands(calls, output_matrix):
+    if not output_matrix:
+        return run_serial_commands(calls)
+
+    matrix = dict(include=calls)
+    with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+        output.write(f"matrix={json.dumps(matrix, separators=(',',':'))}\n")
+
+
+def run_serial_commands(calls):
+    for call in calls:
+        check_call(**call)
+
+
 if __name__ == "__main__":
-    build(sys.argv[1:], push=PUSH_IMAGE in os.environ)
+    args = sys.argv[1:]
+    try:
+        args.remove("--output-matrix")
+    except ValueError:
+        output_matrix = False
+    else:
+        output_matrix = True
+
+    build(args, push=PUSH_IMAGE in os.environ, output_matrix=output_matrix)
