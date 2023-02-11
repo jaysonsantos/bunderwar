@@ -131,9 +131,6 @@ def run_build_commands(calls, output_matrix):
         return run_serial_commands(calls)
 
     matrix = dict(include=calls)
-    if not calls:
-        print("No files to run")
-        matrix = {}
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
         output.write(f"matrix={json.dumps(matrix, separators=(',',':'))}\n")
 
