@@ -44,6 +44,7 @@ jobs:
     name: run-builds
     needs: collect-files
     runs-on: ubuntu-latest
+    if: ${{ fromJSON(needs.collect-files.outputs.matrix) }}
     strategy:
       matrix: ${{ fromJSON(needs.collect-files.outputs.matrix) }}
     steps:
