@@ -39,7 +39,7 @@ jobs:
           else
             modified_files+=(${{ steps.changed-files.outputs.all_modified_files }})
           fi
-          python3 build.py --output-matrix
+          python3 build.py --output-matrix "${modified_files[@]}"
   run-builds:
     name: run-builds
     needs: collect-files
