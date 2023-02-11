@@ -111,6 +111,9 @@ def build(images, push: bool, output_matrix: bool):
             continue
         print(f"Building {image}")
         commands.append(image.get_build_command(push))
+    if not commands:
+        print("No files to run")
+        exit(0)
     run_build_commands(commands, output_matrix)
 
 
