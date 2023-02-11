@@ -7,4 +7,4 @@ ARG CRATE_NAME=cargo-audit
 IMPORT ../rust-binaries
 
 all:
-    BUILD rust-binaries+all --CRATE_VERSION=$CRATE_VERSION --CRATE_NAME=$CRATE_NAME
+    BUILD rust-binaries+all --CRATE_VERSION=$CRATE_VERSION --CRATE_NAME=$CRATE_NAME --INSTALL_ARGS="--features vendored-openssl"
