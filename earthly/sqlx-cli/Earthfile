@@ -7,4 +7,7 @@ ARG CRATE_NAME=sqlx-cli
 IMPORT ../rust-binaries
 
 all:
-    BUILD rust-binaries+all --CRATE_VERSION=$CRATE_VERSION --CRATE_NAME=$CRATE_NAME --INSTALL_ARGS="--features openssl-vendored"
+    BUILD rust-binaries+all \
+    --CRATE_VERSION=$CRATE_VERSION \
+    --CRATE_NAME=$CRATE_NAME \
+    --INSTALL_ARGS="--no-default-features --features rustls,postgres,mysql"
