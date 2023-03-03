@@ -2,7 +2,7 @@ ARG RUST_VERSION=1.67
 FROM rust:${RUST_VERSION}-bookworm
 RUN apt update \
     && apt install --no-install-recommends -y \
-    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs \
+    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time \
     && rustup component add rustfmt clippy \
     && rustup toolchain add nightly \
     && rustup +nightly component add rustfmt \
