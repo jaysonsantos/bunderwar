@@ -1,4 +1,4 @@
-ARG AUTHENTIK_VERSION=2023.2.3
+ARG AUTHENTIK_VERSION=2023.3.0
 FROM ghcr.io/goauthentik/server:${AUTHENTIK_VERSION}
 USER root
 RUN pip install django-cockroachdb==$(python -c 'import django; v = list(django.VERSION); v[2] = "*"; print(".".join(str(p) for p in v[:3]))')
