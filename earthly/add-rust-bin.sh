@@ -11,7 +11,6 @@ IMPORT ../rust-binaries
 
 all:
     BUILD rust-binaries+all --CRATE_VERSION=$CRATE_VERSION --CRATE_NAME=$CRATE_NAME
-
 EOF
 
 main() {
@@ -29,7 +28,7 @@ main() {
     local earthfile="$folder/Earthfile"
     echo "Creating $earthfile with version $version"
     mkdir -p "$folder"
-    echo "${TEMPLATE[@]}" | crate="$crate" version="$version" envsubst -d "😀" -o "$earthfile"
+    echo "${TEMPLATE[@]}" | crate="$crate" version="$version" envsubst-rs -d "😀" -o "$earthfile"
 
 }
 
