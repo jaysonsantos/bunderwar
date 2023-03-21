@@ -67,3 +67,11 @@ jobs:
           fi
 
           bash -exc "${{ join(matrix.args, ' ') }}"
+  guard:
+    name: guard
+    needs: run-builds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Just report matrices as done
+        run: |
+          true
