@@ -1,3 +1,4 @@
+# renovate datasource=github-tags depName=rust-lang/rust
 ARG RUST_VERSION=1.67
 FROM rust:${RUST_VERSION}-bookworm
 RUN apt update \
