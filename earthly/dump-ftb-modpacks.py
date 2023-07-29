@@ -40,7 +40,7 @@ def render_pack(pack):
 
     print(f"Current {mod_version} previous {previous_versions}")
     output_file = HERE / image_name / "Earthfile"
-    output_file.parent.mkdir()
+    output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with output_file.open("w") as output:
         output.write(
