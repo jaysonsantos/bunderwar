@@ -1,0 +1,22 @@
+VERSION --shell-out-anywhere 0.6
+FROM busybox
+
+ARG ARCH_LIBC
+ARG VERSION
+
+ARG PROTOC_VERSION=v22.2
+
+
+image:
+    FROM ghcr.io/cross-rs/x86_64-unknown-linux-gnu:0.2.5
+    RUN apt-get update && apt-get install -y --no-install-recommends \
+        libssl-dev \
+        unzip \
+        && rm -rf /var/lib/apt/lists/*
+    RUN curl -sL https://github.com/protocolbuffers/protobuf/releases/download/${PROTOC_VERSION}/protoc-${PROTOC_VERSION/v/}-linux-x86_64.zip
+    ARG TARGET_RUST_ARCH="$(echo ${TARGETARCH} | sed 's/amd64/x86_64/;s/arm64/aarch64/')"
+    COPY --platform linux/$USERARCH (+install/* --TARGET_RUST_ARCH=$TARGET_RUST_ARCH) /usr/local/bin/
+    SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${CRATE_NAME}-${CRATE_VERSION}
+
+all:
+    BUILD --platform=linux/amd64 --platform=linux/arm64 +image
