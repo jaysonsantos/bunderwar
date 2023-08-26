@@ -4,7 +4,7 @@ ARG MOD_ID=20
 ARG MOD_VERSION=102
 ARG NAME=ftb-infinity-evolved-skyblock
 ARG TARGETARCH
-ARG IS_BETA=1
+ARG IS_BETA=0
 
 IMPORT ../ftb
 

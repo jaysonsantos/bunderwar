@@ -4,7 +4,7 @@ ARG MOD_ID=26
 ARG MOD_VERSION=118
 ARG NAME=ftb-skyfactory-challenges
 ARG TARGETARCH
-ARG IS_BETA=1
+ARG IS_BETA=0
 
 IMPORT ../ftb
 
