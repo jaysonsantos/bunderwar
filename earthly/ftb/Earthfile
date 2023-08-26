@@ -17,6 +17,7 @@ install:
     WORKDIR /mc
     RUN echo eula=true > eula.txt
     RUN sed -i'' 's/^"jre.[^\"]*/exec "java/' ./start.sh
+    RUN sed -i'' 's/ -jar / $JAVA_OPTIONS -jar /' ./start.sh
     SAVE ARTIFACT /mc
 
 image:
