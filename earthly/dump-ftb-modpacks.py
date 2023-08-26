@@ -11,7 +11,7 @@ ARG MOD_ID={mod_id}
 ARG MOD_VERSION={mod_version}
 ARG NAME={image_name}
 ARG TARGETARCH
-ARG IS_BETA=1
+ARG IS_BETA={is_beta}
 
 IMPORT ../ftb
 
@@ -37,6 +37,7 @@ def render_pack(pack):
     version, *previous = pack["versions"]
     mod_version = version["id"]
     previous_versions = ", ".join([str(p["id"]) for p in previous])
+    is_beta = 1 if version["type"] == "beta" else 0
 
     print(f"Current {mod_version} previous {previous_versions}")
     output_file = HERE / image_name / "Earthfile"
@@ -45,7 +46,10 @@ def render_pack(pack):
     with output_file.open("w") as output:
         output.write(
             TEMPLATE.format(
-                mod_id=mod_id, mod_version=mod_version, image_name=image_name
+                mod_id=mod_id,
+                mod_version=mod_version,
+                image_name=image_name,
+                is_beta=is_beta,
             )
         )
     print(f"Written to {output_file}")
