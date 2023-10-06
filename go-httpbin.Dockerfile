@@ -4,7 +4,7 @@ FROM --platform=linux/amd64 golang:1.18-stretch as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=mccutchen/go-httpbin
-ENV PROJECT_VERSION v2.11.0
+ENV PROJECT_VERSION v2.11.1
 ENV PROJECT_NAME=go-httpbin
 ENV BASE_URL https://github.com/mccutchen/${PROJECT_NAME}
 WORKDIR /build
