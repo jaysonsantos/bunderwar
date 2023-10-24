@@ -1,7 +1,7 @@
 VERSION --shell-out-anywhere 0.6
 
 ARG MOD_ID=107
-ARG MOD_VERSION=6663
+ARG MOD_VERSION=6693
 ARG NAME=ftb-integration-by-parts-dx
 ARG TARGETARCH
 ARG IS_BETA=0
