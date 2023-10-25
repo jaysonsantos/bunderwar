@@ -27,6 +27,7 @@ image:
     CMD exec sh ./start.sh
     EXPOSE 25565
     VOLUME /mc/world
+    SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${NAME}${name_suffix}-latest
     SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${NAME}${name_suffix}-${MOD_VERSION}
 
 all:
