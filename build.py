@@ -96,7 +96,7 @@ class Image:
         return dict(args=shlex.split(build_command), cwd=working_directory)
 
     def _build_dockerfile(self, full_tag, platforms, push_arg):
-        build_command = f"docker-buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
+        build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
         print(f"Building with {build_command!r}")
 
         return dict(args=shlex.split(build_command))

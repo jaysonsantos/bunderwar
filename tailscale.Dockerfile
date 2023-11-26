@@ -23,8 +23,6 @@ RUN <<-EOF
     fi
     go build ./cmd/tailscale
     go build ./cmd/tailscaled
-
-
 EOF
 
 FROM debian:stable-slim
