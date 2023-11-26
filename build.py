@@ -26,6 +26,7 @@ class Image:
     dockerfile: Path
 
     _version_re = re.compile(r"(?:ENV|ARG) .+?_VERSION[= ](.*)")
+    _platforms_re = re.compile(r"ARG.+?PLATFORMS=(.*)")
 
     @classmethod
     def load(cls, name) -> "Image":
@@ -77,7 +78,7 @@ class Image:
 
     def get_build_command(self, push):
         full_tag = f"{REPOSITORY}:{self.name}-{self.version}"
-        platforms = ",".join(PLATFORMS)
+        platforms = self.get_platforms()
         push_arg = "--push" if push else ""
 
         if self._is_earthfile():
@@ -95,10 +96,17 @@ class Image:
         return dict(args=shlex.split(build_command), cwd=working_directory)
 
     def _build_dockerfile(self, full_tag, platforms, push_arg):
-        build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
+        build_command = f"docker-buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
         print(f"Building with {build_command!r}")
 
         return dict(args=shlex.split(build_command))
+
+    def get_platforms(self):
+        contents = self.dockerfile.read_text()
+        matches = self._platforms_re.search(contents)
+        if matches:
+            return matches.group(1)
+        return PLATFORMS
 
 
 def build(images, push: bool, output_matrix: bool):
