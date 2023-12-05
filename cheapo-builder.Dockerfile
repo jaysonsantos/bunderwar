@@ -1,6 +1,7 @@
+# version used only to trigger builds on newer nightlies
 # renovate datasource=github-tags depName=rust-lang/rust
-ARG RUST_VERSION=1.67
-FROM rust:${RUST_VERSION}-bookworm
+ARG RUST_VERSION=1.76
+FROM rustlang/rust:nightly-bookworm
 RUN apt update \
     && apt install --no-install-recommends -y \
     restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time \
