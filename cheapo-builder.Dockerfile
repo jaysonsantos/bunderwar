@@ -24,3 +24,4 @@ RUN mkdir /__w/ && chown 1000:1000 /__w/ && chown -R 1000:1000 /usr/local/cargo
 ARG UID=1000
 RUN useradd --create-home --uid $UID code
 USER code
+# rebuild
