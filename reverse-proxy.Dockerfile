@@ -1,5 +1,5 @@
 # renovate datasource=docker depName=alpine
-ARG PROJECT_VERSION=3.18.5
+ARG PROJECT_VERSION=3.19.0
 ARG PROJECT_NAME=alpine
 ARG TARGETPLATFORM
 
