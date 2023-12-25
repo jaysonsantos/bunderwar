@@ -18,10 +18,10 @@ COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.35 /usr/local/bin/car
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.17.4 /usr/local/bin/cargo-audit /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.6.2 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.16.3 /usr/local/bin/ /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-0.19.1 /opt/lima/ /usr/local/
 
 RUN mkdir /__w/ && chown 1000:1000 /__w/ && chown -R 1000:1000 /usr/local/cargo
 
 ARG UID=1000
 RUN useradd --create-home --uid $UID code
 USER code
-# rebuild
