@@ -6,7 +6,7 @@
   "regexManagers": [
     {
       "fileMatch": [
-        "\\.Dockerfile$"
+        "\\.Dockerfile$",
         "Earthfile$"
       ],
       "matchStrings": [
