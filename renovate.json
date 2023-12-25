@@ -7,7 +7,7 @@
     {
       "fileMatch": [
         "\\.Dockerfile$"
-        "^Earthfile$"
+        "Earthfile$"
       ],
       "matchStrings": [
         "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s(ENV|ARG) .*?_VERSION[= ](?<currentValue>.*)\\s"
