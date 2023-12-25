@@ -106,7 +106,7 @@ class Image:
         contents = self.dockerfile.read_text()
         matches = self._platforms_re.search(contents)
         if matches:
-            return matches.group(1)
+            return [platform.strip() for platform in matches.group(1).split(",")]
         return PLATFORMS
 
 
