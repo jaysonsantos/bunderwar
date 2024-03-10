@@ -1,7 +1,7 @@
 VERSION --shell-out-anywhere 0.6
 
 # renovate datasource=crate depName=cargo-udeps
-ARG CRATE_VERSION=0.1.46
+ARG CRATE_VERSION=0.1.47
 ARG CRATE_NAME=cargo-udeps
 
 IMPORT ../rust-binaries
