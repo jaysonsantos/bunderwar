@@ -1,7 +1,7 @@
 VERSION --shell-out-anywhere 0.6
 
 # renovate datasource=crate depName=sqlx-cli
-ARG CRATE_VERSION=0.7.4
+ARG CRATE_VERSION=0.8.0
 ARG CRATE_NAME=sqlx-cli
 
 IMPORT ../rust-binaries
