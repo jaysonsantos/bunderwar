@@ -2,7 +2,7 @@ from io import StringIO
 import json
 import pathlib
 import requests
-import xml.etree.ElementTree
+from defusedxml.ElementTree import parse
 
 HERE = pathlib.Path(__file__).parent
 TEMPLATE = """VERSION --shell-out-anywhere 0.6
@@ -56,10 +56,11 @@ def render_pack(pack):
     print("\n\n")
 
 
-t = xml.etree.ElementTree.parse(
-    StringIO(requests.get("https://www.feed-the-beast.com/modpacks").text)
+t = parse(
+    StringIO(requests.get("https://www.feed-the-beast.com/modpacks", timeout=10).text)
 )
 rv = json.loads(t.find('.//script[@id="__NEXT_DATA__"]').text)
 packs = get_packs(rv)
 for pack in packs:
     render_pack(pack)
+
