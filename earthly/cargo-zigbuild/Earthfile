@@ -1,7 +1,7 @@
 VERSION --shell-out-anywhere 0.6
 
 # renovate datasource=crate depName=cargo-zigbuild
-ARG CRATE_VERSION=0.19.2
+ARG CRATE_VERSION=0.19.3
 ARG CRATE_NAME=cargo-zigbuild
 
 IMPORT ../rust-binaries
