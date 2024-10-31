@@ -4,12 +4,13 @@ ARG RUST_VERSION=1.76
 FROM rustlang/rust:nightly-bookworm
 RUN apt update \
     && apt install --no-install-recommends -y \
-    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils \
+    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils sudo \
     && rustup default nightly \
     && rustup component add rustfmt clippy \
     && rustup target add aarch64-unknown-linux-gnu \
     && rustup target add x86_64-unknown-linux-gnu \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && echo "code ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/code
 COPY --from=quay.io/coreos/butane /usr/local/bin/butane /usr/local/bin/butane
 
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.11.2 /usr/local/bin/cargo-outdated /usr/local/bin/
