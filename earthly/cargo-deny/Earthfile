@@ -1,7 +1,7 @@
 VERSION --shell-out-anywhere 0.6
 
 # renovate datasource=crate depName=cargo-deny
-ARG CRATE_VERSION=0.16.1
+ARG CRATE_VERSION=0.16.2
 ARG CRATE_NAME=cargo-deny
 
 IMPORT ../rust-binaries
