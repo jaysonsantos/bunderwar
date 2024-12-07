@@ -1,5 +1,6 @@
 VERSION --shell-out-anywhere 0.6
-FROM ghcr.io/graalvm/graalvm-ce:ol9-java17
+ARG JAVA_VERSION=ol9-java17
+FROM ghcr.io/graalvm/graalvm-ce:${JAVA_VERSION}
 ARG MOD_ID
 ARG MOD_VERSION
 ARG NAME
@@ -21,7 +22,7 @@ install:
     SAVE ARTIFACT /mc
 
 image:
-    FROM ghcr.io/graalvm/graalvm-ce:ol9-java17
+    FROM ghcr.io/graalvm/graalvm-ce:${JAVA_VERSION}
     COPY +install/mc /mc
     WORKDIR /mc
     CMD exec sh ./start.sh
