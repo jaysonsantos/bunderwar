@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.12-labs
+# syntax=docker/dockerfile:1.13-labs
 
 FROM --platform=linux/amd64 golang:1.18-stretch as builder
 ARG TARGETPLATFORM
