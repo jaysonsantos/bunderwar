@@ -4,7 +4,7 @@ FROM alpine:3.21 AS builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=cloudflare/cloudflared
-ENV CLOUDFLARED_VERSION=2025.2.1
+ENV CLOUDFLARED_VERSION=2025.4.0
 ENV BASE_URL=https://github.com/cloudflare/cloudflared
 WORKDIR /
 RUN <<-EOF
