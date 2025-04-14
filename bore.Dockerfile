@@ -4,7 +4,7 @@ FROM --platform=linux/amd64 rust:slim-buster as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=ekzhang/bore
-ENV PROJECT_VERSION v0.5.2
+ENV PROJECT_VERSION v0.5.3
 ENV PROJECT_NAME=bore
 ENV BASE_URL https://github.com/ekzhang/${PROJECT_NAME}
 WORKDIR /build
