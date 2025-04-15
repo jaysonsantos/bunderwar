@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.14-labs
+# syntax=docker/dockerfile:1.15-labs
 
 FROM --platform=linux/amd64 golang:1.24-alpine as builder
 ARG TARGETPLATFORM
