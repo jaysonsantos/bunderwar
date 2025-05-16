@@ -1,13 +1,14 @@
 {
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "automerge": true,
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": [
-        "\\.Dockerfile$",
-        "Earthfile$"
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/\\.Dockerfile$/",
+        "/Earthfile$/"
       ],
       "matchStrings": [
         "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s(ENV|ARG) .*?_VERSION[= ](?<currentValue>.*)\\s"
