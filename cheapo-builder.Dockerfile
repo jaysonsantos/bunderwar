@@ -4,7 +4,7 @@ ARG RUST_VERSION=1.87.0
 FROM rustlang/rust:nightly-bookworm
 RUN apt update \
     && apt install --no-install-recommends -y \
-    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils sudo \
+    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client\
     && rustup default nightly \
     && rustup component add rustfmt clippy \
     && rustup target add aarch64-unknown-linux-gnu \
