@@ -4,12 +4,13 @@ ARG RUST_VERSION=1.87.0
 FROM rustlang/rust:nightly-bookworm
 RUN apt update \
     && apt install --no-install-recommends -y \
-    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client\
+    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client \
     && rustup default nightly \
     && rustup component add rustfmt clippy \
     && rustup target add aarch64-unknown-linux-gnu \
     && rustup target add x86_64-unknown-linux-gnu \
     && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /etc/sudoers.d \
     && echo "code ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/code
 COPY --from=quay.io/coreos/butane /usr/local/bin/butane /usr/local/bin/butane
 
