@@ -146,8 +146,13 @@ def run_build_commands(calls, output_matrix):
         output.write(f"matrix={json.dumps(matrix, separators=(',',':'))}\n")
 
 
+import shlex
+
 def run_serial_commands(calls):
     for call in calls:
+        command = call.get('args', [])
+        command = [shlex.quote(arg) for arg in command]
+        call['args'] = command
         check_call(**call)
 
 
