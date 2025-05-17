@@ -1,15 +1,18 @@
 {
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "automerge": true,
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/jaysonsantos/bunderwar"],
+      "versionCompatibility": "^(?<compatibility>.*)-(?<version>.*)$",
+      "versioning": "semver"
+    }
+  ],
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/\\.Dockerfile$/",
-        "/Earthfile$/"
-      ],
+      "managerFilePatterns": ["/\\.Dockerfile$/", "/Earthfile$/"],
       "matchStrings": [
         "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s(ENV|ARG) .*?_VERSION[= ](?<currentValue>.*)\\s"
       ],
