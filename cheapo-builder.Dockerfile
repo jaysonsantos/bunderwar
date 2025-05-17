@@ -15,13 +15,13 @@ RUN apt update \
     && echo "code ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/code
 COPY --from=quay.io/coreos/butane /usr/local/bin/butane /usr/local/bin/butane
 
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.11.2 /usr/local/bin/cargo-outdated /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.13.7 /usr/local/bin/cargo-deny /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.35 /usr/local/bin/cargo-udeps /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.17.0 /usr/local/bin/cargo-outdated /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.18.2 /usr/local/bin/cargo-deny /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.55 /usr/local/bin/cargo-udeps /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.17.4 /usr/local/bin/cargo-audit /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.6.2 /usr/local/bin/ /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.16.3 /usr/local/bin/ /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-0.19.1 /opt/lima/ /usr/local/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.5 /usr/local/bin/ /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.20.0 /usr/local/bin/ /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-0.23.2 /opt/lima/ /usr/local/
 
 RUN mkdir /__w/ && chown 1000:1000 /__w/ && chown -R 1000:1000 /usr/local/cargo
 
