@@ -18,7 +18,7 @@ COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.17.0 /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.18.2 /usr/local/bin/cargo-deny /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.55 /usr/local/bin/cargo-udeps /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.17.4 /usr/local/bin/cargo-audit /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.5 /usr/local/bin/ /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.6 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.20.0 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-1.0.7 /opt/lima/ /usr/local/
 
