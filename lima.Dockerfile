@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.15-labs
+# syntax=docker/dockerfile:1.16-labs
 
 FROM alpine:3.21 as builder
 ARG TARGETPLATFORM
