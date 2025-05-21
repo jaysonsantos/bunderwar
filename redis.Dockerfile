@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.15-labs
+# syntax=docker/dockerfile:1.16-labs
 
 FROM --platform=linux/amd64 debian:buster-slim as builder
 ARG TARGETPLATFORM
