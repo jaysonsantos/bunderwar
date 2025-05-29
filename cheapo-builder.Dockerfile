@@ -1,15 +1,19 @@
 # version used only to trigger builds on newer nightlies
 # renovate datasource=github-tags depName=rust-lang/rust
 ARG RUST_VERSION=1.87.0
-ARG A zzzrebuild=0
 FROM rustlang/rust:nightly-bookworm
+ARG ZIG_VERSION=0.14.1
 RUN apt update \
     && apt install --no-install-recommends -y \
-    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client sudo \
+    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client sudo curl xz-utils jq \
     && rustup default nightly \
     && rustup component add rustfmt clippy \
     && rustup target add aarch64-unknown-linux-gnu \
     && rustup target add x86_64-unknown-linux-gnu \
+    && curl -sLo /tmp/zig.tar.xz https://ziglang.org/download/${ZIG_VERSION}/zig-$(uname -m)-linux-${ZIG_VERSION}.tar.xz \
+    && mkdir /usr/local/zig && tar xvf /tmp/zig.tar.xz -C /usr/local/zig --strip-components=1 && rm /tmp/zig.tar.xz \
+    && ln -s /usr/local/zig/zig /usr/local/bin/zig \
+    && zig version \
     && rm -rf /var/lib/apt/lists/* \
     && echo "code ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/code
 COPY --from=quay.io/coreos/butane /usr/local/bin/butane /usr/local/bin/butane
