@@ -1,4 +1,4 @@
-FROM alpine:3.21 as builder
+FROM alpine:3.22 as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=syncthing/discosrv
