@@ -23,7 +23,7 @@ COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.18.3 /usr/local/bin/carg
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.57 /usr/local/bin/cargo-udeps /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.17.4 /usr/local/bin/cargo-audit /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.6 /usr/local/bin/ /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.20.0 /usr/local/bin/ /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.20.1 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-1.2.0 /opt/lima/ /usr/local/
 
 RUN mkdir /__w/ && chown 1000:1000 /__w/ && chown -R 1000:1000 /usr/local/cargo
