@@ -1,7 +1,6 @@
-# version used only to trigger builds on newer nightlies
 # renovate datasource=github-tags depName=rust-lang/rust
 ARG RUST_VERSION=1.88.0
-FROM rustlang/rust:nightly-bookworm
+FROM rustlang/rust:${RUST_VERSION}-bookworm
 ARG ZIG_VERSION=0.14.1
 RUN apt update \
     && apt install --no-install-recommends -y \
