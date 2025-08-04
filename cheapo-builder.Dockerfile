@@ -1,6 +1,6 @@
 # renovate datasource=github-tags depName=rust-lang/rust
 ARG RUST_VERSION=1.88.0
-FROM rustlang/rust:${RUST_VERSION}-bookworm
+FROM rust:${RUST_VERSION}-slim
 ARG ZIG_VERSION=0.14.1
 RUN apt update \
     && apt install --no-install-recommends -y \
