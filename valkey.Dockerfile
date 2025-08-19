@@ -9,7 +9,7 @@ ENV PROJECT_NAME=valkey
 ENV BASE_URL https://github.com/valkey-io/${PROJECT_NAME}
 
 # renovate datasource=github-tags depName=ziglang/zig
-ENV ZIG_VERSION 0.14.1
+ENV ZIG_VERSION 0.15.0
 WORKDIR /build
 RUN <<-EOF
     set -ex
