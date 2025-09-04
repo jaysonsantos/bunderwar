@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.17-labs
+# syntax=docker/dockerfile:1.18-labs
 
 FROM --platform=linux/amd64 rust:slim-buster as builder
 ARG TARGETPLATFORM
