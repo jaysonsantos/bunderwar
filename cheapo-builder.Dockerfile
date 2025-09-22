@@ -18,7 +18,7 @@ RUN apt update \
 COPY --from=quay.io/coreos/butane /usr/local/bin/butane /usr/local/bin/butane
 
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.17.0 /usr/local/bin/cargo-outdated /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.18.4 /usr/local/bin/cargo-deny /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.18.5 /usr/local/bin/cargo-deny /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.59 /usr/local/bin/cargo-udeps /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.17.4 /usr/local/bin/cargo-audit /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.6 /usr/local/bin/ /usr/local/bin/
