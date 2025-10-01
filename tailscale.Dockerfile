@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.18-labs
+# syntax=docker/dockerfile:1.19-labs
 ARG PLATFORMS=linux/arm/v7
 FROM --platform=${BUILDPLATFORM} golang:1.24-bullseye as builder
 ARG TARGETPLATFORM
