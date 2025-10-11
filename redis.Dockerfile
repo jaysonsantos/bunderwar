@@ -9,7 +9,7 @@ ENV PROJECT_NAME=redis
 ENV BASE_URL https://github.com/redis/${PROJECT_NAME}
 
 # renovate datasource=github-tags depName=ziglang/zig
-ENV ZIG_VERSION 0.15.1
+ENV ZIG_VERSION 0.15.2
 WORKDIR /build
 RUN <<-EOF
     set -ex
