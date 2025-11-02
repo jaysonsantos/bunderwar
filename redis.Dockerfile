@@ -4,7 +4,7 @@ FROM --platform=linux/amd64 debian:buster-slim as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=redis/redis
-ENV PROJECT_VERSION 8.2.2
+ENV PROJECT_VERSION 8.2.3
 ENV PROJECT_NAME=redis
 ENV BASE_URL https://github.com/redis/${PROJECT_NAME}
 
