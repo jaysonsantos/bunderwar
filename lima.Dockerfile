@@ -4,7 +4,7 @@ FROM alpine:3.22 as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-releases depName=lima-vm/lima
-ENV LIMA_VERSION v2.0.1
+ENV LIMA_VERSION v2.0.2
 ENV BASE_URL https://github.com/lima-vm/lima 
 WORKDIR /
 RUN <<-EOF
