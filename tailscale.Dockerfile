@@ -6,7 +6,7 @@ ARG TARGETARCH
 ARG TARGETVARIANT
 
 # renovate datasource=github-tags depName=tailscale/tailscale
-ENV PROJECT_VERSION v1.90.8
+ENV PROJECT_VERSION v1.90.9
 ENV PROJECT_NAME=tailscale
 ENV BASE_URL https://github.com/tailscale/${PROJECT_NAME}
 WORKDIR /build
