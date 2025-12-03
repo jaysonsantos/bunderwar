@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.20-labs
 
-FROM alpine:3.22 as builder
+FROM alpine:3.23 as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=open-telemetry/opentelemetry-collector-releases
