@@ -4,7 +4,7 @@ FROM --platform=linux/amd64 golang:1.25-alpine as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=OT-CONTAINER-KIT/redis-operator
-ENV OPERATOR_VERSION v0.22.2
+ENV OPERATOR_VERSION v0.23.0
 ENV BASE_URL https://github.com/OT-CONTAINER-KIT/redis-operator
 WORKDIR /build
 RUN <<-EOF
