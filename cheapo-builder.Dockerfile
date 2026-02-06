@@ -9,6 +9,7 @@ RUN apt update \
     && rustup component add rustfmt clippy \
     && rustup target add aarch64-unknown-linux-gnu \
     && rustup target add x86_64-unknown-linux-gnu \
+    && cargo install sccache --locked \
     && curl -sLo /tmp/zig.tar.xz https://ziglang.org/download/${ZIG_VERSION}/zig-$(uname -m)-linux-${ZIG_VERSION}.tar.xz \
     && mkdir /usr/local/zig && tar xvf /tmp/zig.tar.xz -C /usr/local/zig --strip-components=1 && rm /tmp/zig.tar.xz \
     && ln -s /usr/local/zig/zig /usr/local/bin/zig \
