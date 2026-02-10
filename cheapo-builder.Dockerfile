@@ -26,8 +26,8 @@ COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.6 /usr/local/bin/ /usr/l
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.21.5 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-2.0.3 /opt/lima/ /usr/local/
 
-RUN mkdir /__w/ && chown 1000:1000 /__w/ && chown -R 1000:1000 /usr/local/cargo
+RUN mkdir /__w/ && chown 1001:1001 /__w/ && chown -R 1001:1001 /usr/local/cargo
 
-ARG UID=1000
+ARG UID=1001
 RUN useradd --create-home --uid $UID code
 USER code
