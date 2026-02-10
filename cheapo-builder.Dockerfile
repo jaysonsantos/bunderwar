@@ -4,7 +4,7 @@ FROM rust:${RUST_VERSION}-slim
 ARG ZIG_VERSION=0.14.1
 RUN apt update \
     && apt install --no-install-recommends -y \
-    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client sudo curl xz-utils jq git libssl-dev pkg-config \
+    restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client sudo curl xz-utils jq git libssl-dev pkg-config openssh-client \
     && rustup default nightly \
     && rustup component add rustfmt clippy \
     && rustup target add aarch64-unknown-linux-gnu \
