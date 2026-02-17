@@ -49,7 +49,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
       ;; \
       arm64) \
         target_triple=aarch64-unknown-linux-musl; \
-        export RUSTFLAGS='-C target-cpu=native' \
+        unset RUSTFLAGS \
       ;; \
       *) \
         echo "Unsupported TARGETARCH=$TARGETARCH" >&2; \
