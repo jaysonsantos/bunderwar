@@ -4,9 +4,7 @@ ARG PLATFORMS=linux/amd64,linux/arm64
 # renovate datasource=github-tags depName=rustfs/rustfs
 ARG RUSTFS_VERSION=1.0.0-alpha.83
 
-# renovate datasource=github-tags depName=rust-lang/rust
-ARG RUST_TOOLCHAIN=1.93.0
-FROM --platform=${TARGETPLATFORM} rust:${RUST_TOOLCHAIN}-alpine3.23 AS builder
+FROM alpine:3.23 AS builder
 
 ARG TARGETARCH
 ARG RUSTFS_VERSION
@@ -15,53 +13,38 @@ ENV PROJECT_NAME=rustfs
 ENV BASE_URL=https://github.com/rustfs/${PROJECT_NAME}
 
 WORKDIR /build
-RUN apk add --no-cache \
-    bash \
-    build-base \
-    ca-certificates \
-    clang \
-    cmake \
-    curl \
-    flatbuffers \
-    flatbuffers-dev \
-    git \
-    linux-headers \
-    lld \
-    musl-dev \
-    openssl-dev \
-    perl \
-    pkgconf \
-    protobuf \
-    protobuf-dev
+RUN apk add --no-cache ca-certificates curl unzip
 
-RUN curl -sLo project.tar.gz "${BASE_URL}/archive/refs/tags/${RUSTFS_VERSION}.tar.gz" \
-    && tar zxvf project.tar.gz --strip-components=1 \
-    && rm project.tar.gz
-
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
-    --mount=type=cache,target=/build/target \
-    set -eux; \
+RUN set -eux; \
     case "$TARGETARCH" in \
-      amd64) \
-        target_triple=x86_64-unknown-linux-musl; \
-        export RUSTFLAGS='-C target-cpu=x86-64-v2' \
-      ;; \
-      arm64) \
-        target_triple=aarch64-unknown-linux-musl; \
-        unset RUSTFLAGS \
-      ;; \
-      *) \
-        echo "Unsupported TARGETARCH=$TARGETARCH" >&2; \
-        exit 1 \
-      ;; \
+      amd64) ARCH_SUBSTR="x86_64-musl" ;; \
+      arm64) ARCH_SUBSTR="aarch64-musl" ;; \
+      *) echo "Unsupported TARGETARCH=$TARGETARCH" >&2; exit 1 ;; \
     esac; \
-    rustup target add "$target_triple"; \
-    cargo build --locked --release --target "$target_triple" --package rustfs --bin rustfs; \
-    install -D -m 0755 "target/${target_triple}/release/rustfs" /out/rustfs
+    URL="$(curl -fsSL "https://api.github.com/repos/rustfs/rustfs/releases/tags/${RUSTFS_VERSION}" \
+      | grep -o "\"browser_download_url\": \"[^\"]*${ARCH_SUBSTR}[^\"]*\\.zip\"" \
+      | cut -d'"' -f4 \
+      | head -n 1)"; \
+    if [ -z "$URL" ]; then \
+      echo "Failed to locate release asset for $ARCH_SUBSTR at tag $RUSTFS_VERSION" >&2; \
+      exit 1; \
+    fi; \
+    curl -fL "$URL" -o rustfs.zip; \
+    unzip -q rustfs.zip -d /build; \
+    if [ ! -x /build/rustfs ]; then \
+      BIN_PATH="$(unzip -Z -1 rustfs.zip | grep -E '(^|/)rustfs$' | head -n 1 || true)"; \
+      if [ -n "$BIN_PATH" ]; then \
+        mkdir -p /build/.tmp; \
+        unzip -q rustfs.zip "$BIN_PATH" -d /build/.tmp; \
+        mv "/build/.tmp/$BIN_PATH" /build/rustfs; \
+      fi; \
+    fi; \
+    [ -x /build/rustfs ] || { echo "rustfs binary not found in asset" >&2; exit 1; }; \
+    chmod +x /build/rustfs; \
+    rm -rf rustfs.zip /build/.tmp || true
 
 FROM alpine:3.23
-COPY --from=builder --chmod=755 /out/rustfs /usr/local/bin/rustfs
+COPY --from=builder --chmod=755 /build/rustfs /usr/local/bin/rustfs
 
 RUN apk add --no-cache ca-certificates \
     && addgroup -S rustfs \
