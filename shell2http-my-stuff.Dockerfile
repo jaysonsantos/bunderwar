@@ -7,6 +7,7 @@ RUN apk add -U \
     ocrmypdf \
     tesseract-ocr-data-deu \
     tesseract-ocr-data-eng \
+    tesseract-ocr-data-osd \
     tesseract-ocr-data-por \
     ffmpeg \
     jo
