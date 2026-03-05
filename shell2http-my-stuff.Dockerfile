@@ -8,4 +8,5 @@ RUN apk add -U \
     tesseract-ocr-data-deu \
     tesseract-ocr-data-eng \
     tesseract-ocr-data-por \
-    ffmpeg
+    ffmpeg \
+    jo
