@@ -1,5 +1,7 @@
 # renovate datasource=docker depName=msoap/shell2http
 ARG SHELL2HTTP_VERSION=1.17.0
+# renovate datasource=github-releases depName=astral-sh/uv
+ARG UV_VERSION=0.10.9
 
 FROM msoap/shell2http:${SHELL2HTTP_VERSION}
 
@@ -11,4 +13,7 @@ RUN apk add -U \
     tesseract-ocr-data-por \
     ffmpeg \
     jo \
-    file
+    file \
+    curl \
+ && curl -LsSf "https://astral.sh/uv/${UV_VERSION}/install.sh" \
+    | env UV_UNMANAGED_INSTALL=/usr/local/bin sh
