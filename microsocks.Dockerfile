@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1.21-labs
 
-FROM --platform=$TARGETPLATFORM alpine:3.23 AS builder
+FROM alpine:3.23 AS builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=rofl0r/microsocks
-ENV MICROSOCKS_VERSION v1.0.5
-ENV PROJECT_NAME microsocks
-ENV BASE_URL https://github.com/rofl0r/${PROJECT_NAME}
+ENV MICROSOCKS_VERSION=v1.0.5
+ENV PROJECT_NAME=microsocks
+ENV BASE_URL=https://github.com/rofl0r/${PROJECT_NAME}
 
 WORKDIR /build
 RUN <<-EOF
