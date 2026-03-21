@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM --platform=linux/amd64 golang:1.18-stretch as builder
+FROM --platform=linux/amd64 golang:1.26-trixie as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=mccutchen/go-httpbin

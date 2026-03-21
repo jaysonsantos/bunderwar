@@ -10,11 +10,12 @@ WORKDIR /build
 RUN <<-EOF
     set -ex
     apk add -U curl
+    mkdir -p ${TARGETPLATFORM}
     arch=$(echo $TARGETPLATFORM | cut -d/ -f2)
     curl -sLo operator.tar.gz "${BASE_URL}/archive/refs/tags/${OPERATOR_VERSION}.tar.gz"
     tar zxvf operator.tar.gz --strip-components=1
     rm operator.tar.gz
-    CGO_ENABLED=0 GOOS=linux GOARCH=$arch go build -a -o ${TARGETPLATFORM}/manager main.go
+    CGO_ENABLED=0 GOOS=linux GOARCH=$arch go build -a -o ${TARGETPLATFORM}/manager ./cmd
 EOF
 
 FROM gcr.io/distroless/static:nonroot
