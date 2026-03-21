@@ -1,7 +1,7 @@
 VERSION --shell-out-anywhere 0.6
 
 # renovate datasource=crate depName=sccache
-ARG CRATE_VERSION=0.13.0
+ARG CRATE_VERSION=0.14.0
 ARG CRATE_NAME=sccache
 
 IMPORT ../rust-binaries
