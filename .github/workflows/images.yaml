@@ -69,9 +69,26 @@ jobs:
           bash -exc "${{ join(matrix.args, ' ') }}"
   guard:
     name: guard
-    needs: run-builds
+    needs: [collect-files, run-builds]
     runs-on: ubuntu-latest
+    if: ${{ always() }}
     steps:
-      - name: Just report matrices as done
+      - name: Fail if any upstream job failed
         run: |
-          true
+          collect_files_result="${{ needs.collect-files.result }}"
+          run_builds_result="${{ needs.run-builds.result }}"
+
+          if [ "$collect_files_result" != "success" ]; then
+            echo "collect-files finished with result: $collect_files_result"
+            exit 1
+          fi
+
+          case "$run_builds_result" in
+            success|skipped)
+              exit 0
+              ;;
+            *)
+              echo "run-builds finished with result: $run_builds_result"
+              exit 1
+              ;;
+          esac
