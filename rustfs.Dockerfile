@@ -2,7 +2,7 @@
 ARG PLATFORMS=linux/amd64,linux/arm64
 
 # renovate datasource=github-tags depName=rustfs/rustfs
-ARG RUSTFS_VERSION=1.0.0-alpha.83
+ARG RUSTFS_VERSION=1.0.0-alpha.89
 
 FROM alpine:3.23 AS builder
 
