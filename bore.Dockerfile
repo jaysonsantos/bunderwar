@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM --platform=linux/amd64 rust:slim-buster as builder
+FROM --platform=linux/amd64 rust:1.93.0-slim as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=ekzhang/bore

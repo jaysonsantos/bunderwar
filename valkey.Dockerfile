@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM --platform=linux/amd64 debian:buster-slim as builder
+FROM --platform=linux/amd64 debian:trixie-slim as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=valkey/valkey
@@ -15,7 +15,7 @@ RUN <<-EOF
     set -ex
     mkdir -p ${TARGETPLATFORM}
     apt update && apt install -y curl xz-utils make pkg-config
-    curl -sLo zig.tar.xz https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz
+    curl -sLo zig.tar.xz https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz
     mkdir -p /opt/zig
     (cd /opt/zig && tar xvf /build/zig.tar.xz --strip-components=1)
     rm zig.tar.xz
