@@ -4,51 +4,57 @@ ARG PLATFORMS=linux/amd64,linux/arm64
 # renovate datasource=github-tags depName=rustfs/rustfs
 ARG RUSTFS_VERSION=1.0.0-alpha.90
 
-FROM alpine:3.23 AS builder
+FROM --platform=linux/$TARGETARCH rust:1.93.0-trixie AS builder
 
 ARG TARGETARCH
 ARG RUSTFS_VERSION
-
-ENV PROJECT_NAME=rustfs
-ENV BASE_URL=https://github.com/rustfs/${PROJECT_NAME}
+ARG RUST_TOOLCHAIN=1.93.0
 
 WORKDIR /build
-RUN apk add --no-cache ca-certificates curl unzip
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+    ca-certificates \
+    clang \
+    cmake \
+    curl \
+    g++ \
+    libsystemd-dev \
+    make \
+    perl \
+    pkg-config \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
     case "$TARGETARCH" in \
-      amd64) ARCH_SUBSTR="x86_64-musl" ;; \
-      arm64) ARCH_SUBSTR="aarch64-musl" ;; \
+      amd64|arm64) ;; \
       *) echo "Unsupported TARGETARCH=$TARGETARCH" >&2; exit 1 ;; \
     esac; \
-    URL="$(curl -fsSL "https://api.github.com/repos/rustfs/rustfs/releases/tags/${RUSTFS_VERSION}" \
-      | grep -o "\"browser_download_url\": \"[^\"]*${ARCH_SUBSTR}[^\"]*\\.zip\"" \
-      | cut -d'"' -f4 \
-      | head -n 1)"; \
-    if [ -z "$URL" ]; then \
-      echo "Failed to locate release asset for $ARCH_SUBSTR at tag $RUSTFS_VERSION" >&2; \
-      exit 1; \
-    fi; \
-    curl -fL "$URL" -o rustfs.zip; \
-    unzip -q rustfs.zip -d /build; \
-    if [ ! -x /build/rustfs ]; then \
-      BIN_PATH="$(unzip -Z -1 rustfs.zip | grep -E '(^|/)rustfs$' | head -n 1 || true)"; \
-      if [ -n "$BIN_PATH" ]; then \
-        mkdir -p /build/.tmp; \
-        unzip -q rustfs.zip "$BIN_PATH" -d /build/.tmp; \
-        mv "/build/.tmp/$BIN_PATH" /build/rustfs; \
-      fi; \
-    fi; \
-    [ -x /build/rustfs ] || { echo "rustfs binary not found in asset" >&2; exit 1; }; \
-    chmod +x /build/rustfs; \
-    rm -rf rustfs.zip /build/.tmp || true
+    curl -fsSL "https://api.github.com/repos/rustfs/rustfs/tarball/refs/tags/${RUSTFS_VERSION}" -o rustfs.tar.gz; \
+    tar -xzf rustfs.tar.gz --strip-components=1; \
+    rm rustfs.tar.gz
 
-FROM alpine:3.23
-COPY --from=builder --chmod=755 /build/rustfs /usr/local/bin/rustfs
+RUN set -eux; \
+    case "$(dpkg --print-architecture)" in \
+      amd64) TOOLCHAIN="${RUST_TOOLCHAIN}-x86_64-unknown-linux-gnu" ;; \
+      arm64) TOOLCHAIN="${RUST_TOOLCHAIN}-aarch64-unknown-linux-gnu" ;; \
+      *) echo "Unsupported builder architecture" >&2; exit 1 ;; \
+    esac; \
+    touch rustfs/build.rs; \
+    rustup run "$TOOLCHAIN" cargo build --release -p rustfs --bins; \
+    install -D target/release/rustfs /out/rustfs
 
-RUN apk add --no-cache ca-certificates \
-    && addgroup -S rustfs \
-    && adduser -S -G rustfs rustfs
+FROM debian:trixie-slim
+COPY --from=builder --chmod=755 /out/rustfs /usr/local/bin/rustfs
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+    ca-certificates \
+    libsystemd0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system rustfs \
+    && useradd --system --gid rustfs --no-create-home rustfs
 
 EXPOSE 9000 9001
 USER rustfs
