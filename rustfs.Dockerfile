@@ -66,6 +66,9 @@ FROM debian:trixie-slim
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /out/${TARGETPLATFORM}/rustfs /usr/local/bin/rustfs
 
+# Keep a no-op label here so rustfs image-only workflow changes can force a rebuild.
+LABEL org.opencontainers.image.title="rustfs"
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     ca-certificates \
