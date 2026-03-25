@@ -26,6 +26,10 @@ FROM alpine:3.23
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/microsocks /usr/local/bin/microsocks
 
+LABEL org.opencontainers.image.title="microsocks" \
+      org.opencontainers.image.description="Tiny, portable SOCKS5 proxy server" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 EXPOSE 1080
 ENTRYPOINT ["/usr/local/bin/microsocks"]
 CMD ["-i", "0.0.0.0", "-p", "1080"]

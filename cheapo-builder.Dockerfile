@@ -2,6 +2,11 @@
 ARG RUST_VERSION=1.94.0
 FROM rust:${RUST_VERSION}-slim
 ARG ZIG_VERSION=0.14.1
+
+LABEL org.opencontainers.image.title="cheapo-builder" \
+      org.opencontainers.image.description="Multi-purpose Rust development environment with cross-compilation, QEMU, and CI/CD tools" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 RUN apt update \
     && apt install --no-install-recommends -y \
     restic qemu-system qemu-utils ovmf make protobuf-compiler nodejs time cloud-utils postgresql-client sudo curl xz-utils jq git libssl-dev pkg-config openssh-client \
