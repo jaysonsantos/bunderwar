@@ -76,14 +76,19 @@ class Image:
             return match.group(1).replace("v", "")
         return None
 
-    def get_build_command(self, push):
+    def get_build_commands(self, push: bool, split_platforms: bool):
         full_tag = f"{REPOSITORY}:{self.name}-{self.version}"
         platforms = self.get_platforms()
         push_arg = "--push" if push else ""
 
         if self._is_earthfile():
-            return self._build_earthfile(push_arg)
-        return self._build_dockerfile(full_tag, platforms, push_arg)
+            return [self._build_earthfile(push_arg)]
+        if split_platforms:
+            return [
+                self._build_dockerfile(full_tag, [platform], push_arg)
+                for platform in platforms
+            ]
+        return [self._build_dockerfile(full_tag, platforms, push_arg)]
 
     def _is_earthfile(self):
         return self.dockerfile.name == EARTHFILE
@@ -119,7 +124,7 @@ def build(images, push: bool, output_matrix: bool):
             )
             continue
         print(f"Building {image}")
-        commands.append(image.get_build_command(push))
+        commands.extend(image.get_build_commands(push, split_platforms=output_matrix))
     run_build_commands(commands, output_matrix)
 
 
