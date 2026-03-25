@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-from os import stat
 import os
 import sys
 import glob
@@ -17,6 +16,10 @@ PLATFORMS = {"linux/amd64", "linux/arm64"}
 HERE = Path(__file__).parent
 REPOSITORY = "ghcr.io/jaysonsantos/bunderwar"
 PUSH_IMAGE = "PUSH_IMAGE"
+
+
+def platform_suffix(platform: str) -> str:
+    return platform.replace("/", "-")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -76,8 +79,11 @@ class Image:
             return match.group(1).replace("v", "")
         return None
 
+    def full_tag(self) -> str:
+        return f"{REPOSITORY}:{self.name}-{self.version}"
+
     def get_build_commands(self, push: bool, split_platforms: bool):
-        full_tag = f"{REPOSITORY}:{self.name}-{self.version}"
+        full_tag = self.full_tag()
         platforms = self.get_platforms()
         push_arg = "--push" if push else ""
 
@@ -85,10 +91,25 @@ class Image:
             return [self._build_earthfile(push_arg)]
         if split_platforms:
             return [
-                self._build_dockerfile(full_tag, [platform], push_arg)
+                self._build_dockerfile(
+                    full_tag,
+                    [platform],
+                    push_arg,
+                    output_tag=f"{full_tag}-{platform_suffix(platform)}",
+                )
                 for platform in platforms
             ]
         return [self._build_dockerfile(full_tag, platforms, push_arg)]
+
+    def get_manifest_entry(self):
+        if self._is_earthfile():
+            return None
+        full_tag = self.full_tag()
+        platforms = self.get_platforms()
+        return dict(
+            image=full_tag,
+            sources=[f"{full_tag}-{platform_suffix(platform)}" for platform in platforms],
+        )
 
     def _is_earthfile(self):
         return self.dockerfile.name == EARTHFILE
@@ -100,12 +121,18 @@ class Image:
 
         return dict(args=shlex.split(build_command), cwd=working_directory)
 
-    def _build_dockerfile(self, full_tag, platforms, push_arg):
+    def _build_dockerfile(self, full_tag, platforms, push_arg, output_tag=None):
         platforms = ','.join(platforms)
-        build_command = f"docker buildx build {push_arg} --tag {full_tag} -f {self.dockerfile} --platform {platforms} ."
+        output_tag = output_tag or full_tag
+        build_command = f"docker buildx build {push_arg} --tag {output_tag} -f {self.dockerfile} --platform {platforms} ."
         print(f"Building with {build_command!r}")
 
-        return dict(args=shlex.split(build_command))
+        return dict(
+            args=shlex.split(build_command),
+            image=full_tag,
+            platform=platforms,
+            publish_tag=output_tag,
+        )
 
     def get_platforms(self):
         contents = self.dockerfile.read_text()
@@ -117,6 +144,7 @@ class Image:
 
 def build(images, push: bool, output_matrix: bool):
     commands = []
+    manifests = []
     for image in get_images(images):
         if not image.version:
             print(
@@ -125,7 +153,11 @@ def build(images, push: bool, output_matrix: bool):
             continue
         print(f"Building {image}")
         commands.extend(image.get_build_commands(push, split_platforms=output_matrix))
-    run_build_commands(commands, output_matrix)
+        if output_matrix:
+            manifest = image.get_manifest_entry()
+            if manifest:
+                manifests.append(manifest)
+    run_build_commands(commands, manifests, output_matrix)
 
 
 def get_images(names) -> Iterator[Image]:
@@ -140,7 +172,7 @@ def all_images():
     return glob.glob("**/*.Dockerfile", recursive=True)
 
 
-def run_build_commands(calls, output_matrix):
+def run_build_commands(calls, manifests, output_matrix):
     if not output_matrix:
         return run_serial_commands(calls)
 
@@ -149,6 +181,9 @@ def run_build_commands(calls, output_matrix):
     matrix = dict(include=calls)
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
         output.write(f"matrix={json.dumps(matrix, separators=(',',':'))}\n")
+        output.write(
+            f"merge_matrix={json.dumps(dict(include=manifests), separators=(',',':'))}\n"
+        )
 
 
 def run_serial_commands(calls):
