@@ -66,8 +66,9 @@ FROM debian:trixie-slim
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /out/${TARGETPLATFORM}/rustfs /usr/local/bin/rustfs
 
-# Keep a no-op label here so rustfs image-only workflow changes can force a rebuild.
-LABEL org.opencontainers.image.title="rustfs"
+LABEL org.opencontainers.image.title="rustfs" \
+      org.opencontainers.image.description="High-performance distributed file system built with Rust for cloud-native storage" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
