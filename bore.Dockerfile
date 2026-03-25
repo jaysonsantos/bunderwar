@@ -37,4 +37,8 @@ FROM debian:trixie-slim
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/${TARGETPLATFORM}/bore /usr/local/bin/
 
+LABEL org.opencontainers.image.title="bore" \
+      org.opencontainers.image.description="Lightweight TCP tunnel client and server for exposing local services" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 ENTRYPOINT [ "/usr/local/bin/bore" ]
