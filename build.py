@@ -95,7 +95,7 @@ class Image:
                     full_tag,
                     [platform],
                     push_arg,
-                    output_tag=f"{full_tag}-{platform_suffix(platform)}",
+                    output_tag=f"{REPOSITORY}:{platform_suffix(platform)}-{self.name}-{self.version}",
                 )
                 for platform in platforms
             ]
@@ -108,7 +108,10 @@ class Image:
         platforms = self.get_platforms()
         return dict(
             image=full_tag,
-            sources=[f"{full_tag}-{platform_suffix(platform)}" for platform in platforms],
+            sources=[
+                f"{REPOSITORY}:{platform_suffix(platform)}-{self.name}-{self.version}"
+                for platform in platforms
+            ],
         )
 
     def _is_earthfile(self):
