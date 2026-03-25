@@ -17,4 +17,8 @@ RUN tar zxvf stdiscosrv.tar.gz --strip-components 1
 FROM gcr.io/distroless/static
 COPY --from=builder /stdiscosrv /usr/local/bin/
 
+LABEL org.opencontainers.image.title="syncthing-discovery-server" \
+      org.opencontainers.image.description="Global discovery server for Syncthing peer-to-peer file synchronization" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 CMD [ "/usr/local/bin/stdiscosrv" ]
