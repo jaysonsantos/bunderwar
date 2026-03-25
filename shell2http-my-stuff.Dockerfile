@@ -5,6 +5,10 @@ ARG UV_VERSION=0.11.1
 
 FROM msoap/shell2http:${SHELL2HTTP_VERSION}
 
+LABEL org.opencontainers.image.title="shell2http-my-stuff" \
+      org.opencontainers.image.description="HTTP server exposing shell scripts with OCR, ffmpeg and multimedia tools" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 RUN apk add -U \
     ocrmypdf \
     tesseract-ocr-data-deu \
