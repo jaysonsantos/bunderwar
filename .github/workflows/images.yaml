@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      merge_matrix: ${{ steps.set-matrix.outputs.merge_matrix }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -67,9 +68,26 @@ jobs:
           fi
 
           bash -exc "${{ join(matrix.args, ' ') }}"
+  merge-manifests:
+    name: merge-manifests
+    needs: [collect-files, run-builds]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' && needs.collect-files.outputs.merge_matrix != '{"include":[]}' }}
+    strategy:
+      matrix: ${{ fromJSON(needs.collect-files.outputs.merge_matrix) }}
+    steps:
+      - name: Login to docker
+        run: |
+          echo  ${{ secrets.GITHUB_TOKEN }} | docker login --username ${{ github.actor }} --password-stdin ghcr.io
+      - run: docker buildx create --use
+      - name: Merge manifest
+        run: |
+          docker buildx imagetools create \
+            --tag "${{ matrix.image }}" \
+            ${{ join(matrix.sources, ' ') }}
   guard:
     name: guard
-    needs: [collect-files, run-builds]
+    needs: [collect-files, run-builds, merge-manifests]
     runs-on: ubuntu-latest
     if: ${{ always() }}
     steps:
@@ -77,6 +95,7 @@ jobs:
         run: |
           collect_files_result="${{ needs.collect-files.result }}"
           run_builds_result="${{ needs.run-builds.result }}"
+          merge_manifests_result="${{ needs.merge-manifests.result }}"
 
           if [ "$collect_files_result" != "success" ]; then
             echo "collect-files finished with result: $collect_files_result"
@@ -85,10 +104,19 @@ jobs:
 
           case "$run_builds_result" in
             success|skipped)
-              exit 0
               ;;
             *)
               echo "run-builds finished with result: $run_builds_result"
+              exit 1
+              ;;
+          esac
+
+          case "$merge_manifests_result" in
+            success|skipped)
+              exit 0
+              ;;
+            *)
+              echo "merge-manifests finished with result: $merge_manifests_result"
               exit 1
               ;;
           esac
