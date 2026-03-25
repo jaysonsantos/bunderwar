@@ -30,4 +30,8 @@ ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/tailscale /usr/local/bin/
 COPY --from=builder --chmod=755 /build/tailscaled /usr/local/bin/
 
+LABEL org.opencontainers.image.title="tailscale" \
+      org.opencontainers.image.description="Mesh VPN service for secure network connectivity across devices" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 ENTRYPOINT [ "/usr/local/bin/tailscaled" ]
