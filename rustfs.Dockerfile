@@ -9,70 +9,57 @@ FROM --platform=${BUILDPLATFORM} rust:1.93.0-trixie AS builder
 ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG RUSTFS_VERSION
-ARG RUST_TOOLCHAIN=1.93.0
+ARG ZIG_VERSION=0.14.1
 
 WORKDIR /build
 
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.22.1 /usr/local/bin/cargo-zigbuild /usr/local/bin/cargo-zigbuild
+
 RUN set -eux; \
+    case "$(dpkg --print-architecture)" in \
+      amd64) zig_arch="x86_64" ;; \
+      arm64) zig_arch="aarch64" ;; \
+      *) echo "Unsupported builder architecture" >&2; exit 1 ;; \
+    esac; \
     case "$TARGETARCH" in \
       amd64) \
         RUST_TARGET="x86_64-unknown-linux-gnu"; \
         GNU_TRIPLE="x86_64-linux-gnu"; \
-        LINKER="x86_64-linux-gnu-gcc"; \
-        GCC_PACKAGE="gcc-x86-64-linux-gnu"; \
-        LIBC_DEV_PACKAGE="libc6-dev-amd64-cross"; \
-        CARGO_LINKER_VAR="CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER"; \
-        CC_VAR="CC_x86_64_unknown_linux_gnu"; \
-        CFLAGS_VAR="CFLAGS_x86_64_unknown_linux_gnu"; \
+        SYSTEMD_PACKAGE_ARCH="amd64"; \
         ;; \
       arm64) \
         RUST_TARGET="aarch64-unknown-linux-gnu"; \
         GNU_TRIPLE="aarch64-linux-gnu"; \
-        LINKER="aarch64-linux-gnu-gcc"; \
-        GCC_PACKAGE="gcc-aarch64-linux-gnu"; \
-        LIBC_DEV_PACKAGE="libc6-dev-arm64-cross"; \
-        CARGO_LINKER_VAR="CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER"; \
-        CC_VAR="CC_aarch64_unknown_linux_gnu"; \
-        CFLAGS_VAR="CFLAGS_aarch64_unknown_linux_gnu"; \
+        SYSTEMD_PACKAGE_ARCH="arm64"; \
         ;; \
       *) echo "Unsupported TARGETARCH=$TARGETARCH" >&2; exit 1 ;; \
     esac; \
-    case "$(dpkg --print-architecture)" in \
-      amd64) NATIVE_TOOLCHAIN="${RUST_TOOLCHAIN}-x86_64-unknown-linux-gnu" ;; \
-      arm64) NATIVE_TOOLCHAIN="${RUST_TOOLCHAIN}-aarch64-unknown-linux-gnu" ;; \
-      *) echo "Unsupported builder architecture" >&2; exit 1 ;; \
-    esac; \
-    SYSROOT="/usr/${GNU_TRIPLE}"; \
-    if [ "$(dpkg --print-architecture)" != "$TARGETARCH" ]; then \
-      dpkg --add-architecture "$TARGETARCH"; \
+    if [ "$(dpkg --print-architecture)" != "$SYSTEMD_PACKAGE_ARCH" ]; then \
+      dpkg --add-architecture "$SYSTEMD_PACKAGE_ARCH"; \
     fi; \
     apt-get update; \
     apt-get install --no-install-recommends -y \
       ca-certificates \
-      clang \
-      cmake \
       curl \
-      g++ \
-      "$LIBC_DEV_PACKAGE" \
-      libsystemd-dev:${TARGETARCH} \
-      make \
+      libsystemd-dev:${SYSTEMD_PACKAGE_ARCH} \
       perl \
       pkg-config \
       protobuf-compiler \
-      "$GCC_PACKAGE"; \
+      xz-utils; \
     rm -rf /var/lib/apt/lists/*; \
+    curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-${zig_arch}-linux-${ZIG_VERSION}.tar.xz" -o zig.tar.xz; \
+    mkdir -p /usr/local/zig; \
+    tar -xJf zig.tar.xz -C /usr/local/zig --strip-components=1; \
+    ln -s /usr/local/zig/zig /usr/local/bin/zig; \
+    rm zig.tar.xz; \
     curl -fsSL "https://api.github.com/repos/rustfs/rustfs/tarball/refs/tags/${RUSTFS_VERSION}" -o rustfs.tar.gz; \
     tar -xzf rustfs.tar.gz --strip-components=1; \
     rm rustfs.tar.gz; \
-    rustup target add --toolchain "$NATIVE_TOOLCHAIN" "$RUST_TARGET"; \
+    rustup target add "$RUST_TARGET"; \
     touch rustfs/build.rs; \
     export PKG_CONFIG_ALLOW_CROSS=1; \
-    export PKG_CONFIG_SYSROOT_DIR="${SYSROOT}"; \
     export PKG_CONFIG_LIBDIR="/usr/lib/${GNU_TRIPLE}/pkgconfig:/usr/share/pkgconfig"; \
-    export "${CARGO_LINKER_VAR}=${LINKER}"; \
-    export "${CC_VAR}=${LINKER}"; \
-    export "${CFLAGS_VAR}=--sysroot=${SYSROOT}"; \
-    rustup run "$NATIVE_TOOLCHAIN" cargo build --release --target "$RUST_TARGET" -p rustfs --bins; \
+    cargo zigbuild --release --target "$RUST_TARGET" -p rustfs --bins; \
     install -D "target/${RUST_TARGET}/release/rustfs" "/out/${TARGETPLATFORM}/rustfs"
 
 FROM debian:trixie-slim
