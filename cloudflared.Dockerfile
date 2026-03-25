@@ -17,6 +17,11 @@ EOF
 
 FROM gcr.io/distroless/static
 COPY --from=builder /cloudflared /usr/local/bin/
+
+LABEL org.opencontainers.image.title="cloudflared" \
+      org.opencontainers.image.description="Cloudflare tunnel client for secure connections to Cloudflare network" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 RUN ["/usr/local/bin/cloudflared", "--version"]
 
 CMD [ "/usr/local/bin/cloudflared" ]
