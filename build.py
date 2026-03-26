@@ -89,7 +89,7 @@ class Image:
 
         if self._is_earthfile():
             return [self._build_earthfile(push_arg)]
-        if split_platforms:
+        if split_platforms and not push:
             return [
                 self._build_dockerfile(
                     full_tag,
@@ -145,6 +145,7 @@ class Image:
 def build(images, push: bool, output_matrix: bool):
     commands = []
     manifests = []
+    split_platform_builds = output_matrix and not push
     for image in get_images(images):
         if not image.version:
             print(
@@ -152,8 +153,10 @@ def build(images, push: bool, output_matrix: bool):
             )
             continue
         print(f"Building {image}")
-        commands.extend(image.get_build_commands(push, split_platforms=output_matrix))
-        if output_matrix:
+        commands.extend(
+            image.get_build_commands(push, split_platforms=split_platform_builds)
+        )
+        if split_platform_builds:
             manifest = image.get_manifest_entry()
             if manifest:
                 manifests.append(manifest)
