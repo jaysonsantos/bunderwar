@@ -127,14 +127,19 @@ class Image:
     def _build_dockerfile(self, full_tag, platforms, push_arg, output_tag=None):
         platforms = ",".join(platforms)
         output_tag = output_tag or full_tag
-        annotations = " ".join(
-            f'--annotation "{key}={value}"' for key, value in self.get_labels()
+        args = ["docker", "buildx", "build"]
+        if push_arg:
+            args.append(push_arg)
+        args.extend(
+            ["--tag", output_tag, "-f", str(self.dockerfile), "--platform", platforms]
         )
-        build_command = f"docker buildx build {push_arg} --tag {output_tag} -f {self.dockerfile} --platform {platforms} {annotations} ."
-        print(f"Building with {build_command!r}")
+        for key, value in self.get_labels():
+            args.extend(["--annotation", f"{key}={value}"])
+        args.append(".")
+        print(f"Building with {args!r}")
 
         return dict(
-            args=shlex.split(build_command),
+            args=args,
             image=full_tag,
             platform=platforms,
             publish_tag=output_tag,
