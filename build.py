@@ -134,7 +134,7 @@ class Image:
             ["--tag", output_tag, "-f", str(self.dockerfile), "--platform", platforms]
         )
         for key, value in self.get_labels():
-            args.extend(["--annotation", f"{key}={value}"])
+            args.extend(["--annotation", shlex.quote(f"{key}={value}")])
         args.append(".")
         print(f"Building with {args!r}")
 
