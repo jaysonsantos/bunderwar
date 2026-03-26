@@ -35,6 +35,10 @@ FROM gcr.io/distroless/static:nonroot
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/${TARGETPLATFORM} /usr/local/bin/
 
+LABEL org.opencontainers.image.title="valkey" \
+      org.opencontainers.image.description="High-performance key-value data store, open-source alternative to Redis" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 RUN ["/usr/local/bin/valkey-server", "--version"]
 ENTRYPOINT [ "/usr/local/bin/valkey-server" ]
 CMD ["/etc/valkey/external.conf.d/valkey-external.conf"]

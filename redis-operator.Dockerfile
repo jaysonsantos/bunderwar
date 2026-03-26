@@ -22,4 +22,8 @@ FROM gcr.io/distroless/static:nonroot
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/${TARGETPLATFORM}/manager /
 
+LABEL org.opencontainers.image.title="redis-operator" \
+      org.opencontainers.image.description="Kubernetes operator for managing Redis clusters and sentinel deployments" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 CMD [ "/manager" ]

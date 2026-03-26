@@ -2,6 +2,11 @@
 # renovate datasource=github-releases depName=linuxserver/docker-homeassistant
 ARG HOMEASSISTANT_VERSION=2025.5.1-ls104
 FROM lscr.io/linuxserver/homeassistant:${HOMEASSISTANT_VERSION}
+
+LABEL org.opencontainers.image.title="homeassistant" \
+      org.opencontainers.image.description="Open source home automation platform with Kubernetes-friendly permissions" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 RUN set -x && \
     BK="$(find /usr/local/lib -name '*.bak' -maxdepth 1)" && \
     NEW="${BK/.bak/}" && \

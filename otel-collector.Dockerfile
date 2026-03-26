@@ -19,4 +19,8 @@ EOF
 FROM gcr.io/distroless/static
 COPY --from=builder /otelcol /usr/local/bin/
 
+LABEL org.opencontainers.image.title="otel-collector" \
+      org.opencontainers.image.description="OpenTelemetry collector for distributed tracing, metrics, and logs" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 CMD [ "/usr/local/bin/otelcol" ]
