@@ -17,4 +17,9 @@ EOF
 
 FROM debian
 COPY --from=builder /opt/lima /opt/lima 
+
+LABEL org.opencontainers.image.title="lima" \
+      org.opencontainers.image.description="Linux virtual machines on macOS and Linux for container development" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 ENV PATH="$PATH:/opt/lima/bin"

@@ -23,4 +23,8 @@ FROM debian:stable-20211201-slim
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/${TARGETPLATFORM}/go-httpbin /usr/local/bin/
 
+LABEL org.opencontainers.image.title="go-httpbin" \
+      org.opencontainers.image.description="HTTP request and response testing service compatible with httpbin.org" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 ENTRYPOINT [ "/usr/local/bin/go-httpbin" ]
