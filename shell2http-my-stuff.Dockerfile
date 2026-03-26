@@ -21,3 +21,5 @@ RUN apk add -U \
     curl \
  && curl -LsSf "https://astral.sh/uv/${UV_VERSION}/install.sh" \
     | env UV_UNMANAGED_INSTALL=/usr/local/bin sh
+
+# Rebuild trigger for annotation support

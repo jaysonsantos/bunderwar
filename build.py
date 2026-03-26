@@ -30,6 +30,7 @@ class Image:
 
     _version_re = re.compile(r"(?:ENV|ARG) .+?_VERSION[= ](.*)")
     _platforms_re = re.compile(r"ARG.+?PLATFORMS=(.*)")
+    _label_re = re.compile(r"LABEL\s+(.+?)(?=\n(?:[A-Z]|\s+\w+=|\s+\w+=\"))", re.DOTALL)
 
     @classmethod
     def load(cls, name) -> "Image":
@@ -108,7 +109,9 @@ class Image:
         platforms = self.get_platforms()
         return dict(
             image=full_tag,
-            sources=[f"{full_tag}-{platform_suffix(platform)}" for platform in platforms],
+            sources=[
+                f"{full_tag}-{platform_suffix(platform)}" for platform in platforms
+            ],
         )
 
     def _is_earthfile(self):
@@ -122,9 +125,12 @@ class Image:
         return dict(args=shlex.split(build_command), cwd=working_directory)
 
     def _build_dockerfile(self, full_tag, platforms, push_arg, output_tag=None):
-        platforms = ','.join(platforms)
+        platforms = ",".join(platforms)
         output_tag = output_tag or full_tag
-        build_command = f"docker buildx build {push_arg} --tag {output_tag} -f {self.dockerfile} --platform {platforms} ."
+        annotations = " ".join(
+            f'--annotation "{key}={value}"' for key, value in self.get_labels()
+        )
+        build_command = f"docker buildx build {push_arg} --tag {output_tag} -f {self.dockerfile} --platform {platforms} {annotations} ."
         print(f"Building with {build_command!r}")
 
         return dict(
@@ -140,6 +146,17 @@ class Image:
         if matches:
             return [platform.strip() for platform in matches.group(1).split(",")]
         return PLATFORMS
+
+    def get_labels(self):
+        contents = self.dockerfile.read_text()
+        labels = []
+        for match in self._label_re.finditer(contents):
+            label_block = match.group(1)
+            # Parse key=value pairs, handling multi-line with backslash continuation
+            label_block = label_block.replace("\\\n", " ")
+            for label_match in re.finditer(r'(\S+?)="([^"]*)"', label_block):
+                labels.append((label_match.group(1), label_match.group(2)))
+        return labels
 
 
 def build(images, push: bool, output_matrix: bool):
@@ -183,9 +200,9 @@ def run_build_commands(calls, manifests, output_matrix):
         calls.append(dict(args=["true"]))
     matrix = dict(include=calls)
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
-        output.write(f"matrix={json.dumps(matrix, separators=(',',':'))}\n")
+        output.write(f"matrix={json.dumps(matrix, separators=(',', ':'))}\n")
         output.write(
-            f"merge_matrix={json.dumps(dict(include=manifests), separators=(',',':'))}\n"
+            f"merge_matrix={json.dumps(dict(include=manifests), separators=(',', ':'))}\n"
         )
 
 
