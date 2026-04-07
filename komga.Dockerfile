@@ -10,7 +10,7 @@ FROM rclone/rclone:${RCLONE_VERSION} AS rclone
 FROM lscr.io/linuxserver/baseimage-ubuntu:noble
 
 LABEL org.opencontainers.image.title="komga" \
-      org.opencontainers.image.description="Komga on LinuxServer's Ubuntu base image with an optional s6-managed rclone Google Drive mount" \
+      org.opencontainers.image.description="Komga on LinuxServer Ubuntu base image with an optional s6-managed rclone Google Drive mount" \
       org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
 
 ENV JAVA_HOME=/opt/java/openjdk
