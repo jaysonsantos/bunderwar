@@ -1,0 +1,56 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+set -euo pipefail
+
+enabled="${RCLONE_MOUNT_ENABLED,,}"
+if [[ "${enabled}" != "1" && "${enabled}" != "true" && "${enabled}" != "yes" ]]; then
+    echo "rclone mount disabled"
+    exec sleep infinity
+fi
+
+if [[ -z "${RCLONE_REMOTE}" ]]; then
+    echo "RCLONE_REMOTE must be set when RCLONE_MOUNT_ENABLED=true" >&2
+    exit 1
+fi
+
+if [[ ! -c /dev/fuse ]]; then
+    echo "/dev/fuse is not available; run the container with FUSE support before enabling rclone mount" >&2
+    exit 1
+fi
+
+mkdir -p "${RCLONE_MOUNT_PATH}" "${RCLONE_CACHE_DIR}" "$(dirname "${RCLONE_CONFIG_FILE}")"
+
+if [[ ! -f "${RCLONE_CONFIG_FILE}" ]]; then
+    echo "rclone config file not found: ${RCLONE_CONFIG_FILE}" >&2
+    exit 1
+fi
+
+read -r -a extra_args <<< "${RCLONE_EXTRA_ARGS:-}"
+
+exec rclone mount "${RCLONE_REMOTE}" "${RCLONE_MOUNT_PATH}" \
+    --config "${RCLONE_CONFIG_FILE}" \
+    --cache-dir "${RCLONE_CACHE_DIR}" \
+    --uid "$(id -u abc)" \
+    --gid "$(id -g abc)" \
+    --umask 002 \
+    --no-checksum \
+    --use-server-modtime \
+    --no-gzip-encoding \
+    --no-update-modtime \
+    --no-seek \
+    --modify-window 2m \
+    --allow-other \
+    --allow-non-empty \
+    --dir-cache-time 30m \
+    --cache-read-retries 15 \
+    --cache-db-purge \
+    --timeout 30m \
+    --vfs-cache-mode full \
+    --vfs-read-chunk-size 2M \
+    --vfs-read-chunk-size-limit 5M \
+    --vfs-cache-max-age 30m \
+    --attr-timeout 20s \
+    --poll-interval 9m \
+    --vfs-cache-poll-interval 10m \
+    "${extra_args[@]}"
