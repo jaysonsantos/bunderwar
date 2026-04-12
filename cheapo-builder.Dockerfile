@@ -22,7 +22,7 @@ RUN apt update \
     && echo "code ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/code
 COPY --from=quay.io/coreos/butane /usr/local/bin/butane /usr/local/bin/butane
 
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.17.0 /usr/local/bin/cargo-outdated /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-outdated-0.18.0 /usr/local/bin/cargo-outdated /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.19.1 /usr/local/bin/cargo-deny /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.60 /usr/local/bin/cargo-udeps /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.22.1 /usr/local/bin/cargo-audit /usr/local/bin/
