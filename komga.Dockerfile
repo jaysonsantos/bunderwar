@@ -2,7 +2,7 @@
 # renovate datasource=github-releases depName=gotson/komga
 ARG KOMGA_VERSION=1.24.3
 # renovate datasource=github-releases depName=rclone/rclone
-ARG RCLONE_VERSION=1.73.4
+ARG RCLONE_VERSION=1.73.5
 FROM ghcr.io/gotson/komga:${KOMGA_VERSION} AS komga
 
 FROM rclone/rclone:${RCLONE_VERSION} AS rclone
