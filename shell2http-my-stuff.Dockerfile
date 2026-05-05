@@ -1,7 +1,7 @@
 # renovate datasource=docker depName=msoap/shell2http
 ARG SHELL2HTTP_VERSION=1.17.0
 # renovate datasource=github-releases depName=astral-sh/uv
-ARG UV_VERSION=0.11.9
+ARG UV_VERSION=0.11.10
 
 FROM msoap/shell2http:${SHELL2HTTP_VERSION}
 
