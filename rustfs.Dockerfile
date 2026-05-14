@@ -2,7 +2,7 @@
 ARG PLATFORMS=linux/amd64,linux/arm64
 
 # renovate datasource=github-tags depName=rustfs/rustfs
-ARG RUSTFS_VERSION=1.0.0-beta.2
+ARG RUSTFS_VERSION=1.0.0-beta.3
 
 FROM --platform=${BUILDPLATFORM} rust:1.95.0-trixie AS builder
 
