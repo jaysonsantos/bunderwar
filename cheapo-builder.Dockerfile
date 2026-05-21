@@ -27,7 +27,7 @@ COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-deny-0.19.6 /usr/local/bin/carg
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-udeps-0.1.60 /usr/local/bin/cargo-udeps /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.22.1 /usr/local/bin/cargo-audit /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:sccache-0.15.0 /usr/local/bin/sccache /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.8.6 /usr/local/bin/ /usr/local/bin/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.9.0 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.22.3 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-2.1.1 /opt/lima/ /usr/local/
 
