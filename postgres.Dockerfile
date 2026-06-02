@@ -2,7 +2,7 @@
 ARG PLATFORMS=linux/amd64,linux/arm64
 
 # renovate datasource=docker depName=postgres versioning=docker
-ARG POSTGRES_VERSION=17.10
+ARG POSTGRES_VERSION=18.4
 
 FROM postgres:${POSTGRES_VERSION}-bookworm
 
