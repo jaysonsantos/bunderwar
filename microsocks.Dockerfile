@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM alpine:3.23 AS builder
+FROM alpine:3.24 AS builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=rofl0r/microsocks
@@ -22,7 +22,7 @@ RUN <<-EOF
     make -j"$(nproc)"
 EOF
 
-FROM alpine:3.23
+FROM alpine:3.24
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/microsocks /usr/local/bin/microsocks
 
