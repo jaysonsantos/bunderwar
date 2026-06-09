@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM alpine:3.23 as builder
+FROM alpine:3.24 as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-releases depName=lima-vm/lima

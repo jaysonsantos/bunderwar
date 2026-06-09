@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM alpine:3.23 AS builder
+FROM alpine:3.24 AS builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=cloudflare/cloudflared
