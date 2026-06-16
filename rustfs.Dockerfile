@@ -13,7 +13,7 @@ ARG ZIG_VERSION=0.14.1
 
 WORKDIR /build
 
-COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.22.3 /usr/local/bin/cargo-zigbuild /usr/local/bin/cargo-zigbuild
+COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.23.0 /usr/local/bin/cargo-zigbuild /usr/local/bin/cargo-zigbuild
 
 RUN set -eux; \
     case "$(dpkg --print-architecture)" in \
