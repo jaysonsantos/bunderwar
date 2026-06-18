@@ -18,7 +18,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       merge_matrix: ${{ steps.set-matrix.outputs.merge_matrix }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - name: Get changed files using a comma separator
@@ -49,7 +49,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.collect-files.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Login to docker
