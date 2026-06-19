@@ -29,7 +29,7 @@ COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-audit-0.22.2 /usr/local/bin/car
 COPY --from=ghcr.io/jaysonsantos/bunderwar:sccache-0.15.0 /usr/local/bin/sccache /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:sqlx-cli-0.9.0 /usr/local/bin/ /usr/local/bin/
 COPY --from=ghcr.io/jaysonsantos/bunderwar:cargo-zigbuild-0.23.0 /usr/local/bin/ /usr/local/bin/
-COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-2.1.2 /opt/lima/ /usr/local/
+COPY --from=ghcr.io/jaysonsantos/bunderwar:lima-2.1.3 /opt/lima/ /usr/local/
 
 RUN mkdir /__w/ && chown 1001:1001 /__w/ && chown -R 1001:1001 /usr/local/cargo
 
