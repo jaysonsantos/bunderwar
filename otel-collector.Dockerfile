@@ -4,7 +4,7 @@ FROM alpine:3.24 as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=open-telemetry/opentelemetry-collector-releases
-ENV OTEL_VERSION v0.154.0
+ENV OTEL_VERSION v0.155.0
 ENV BASE_URL https://github.com/open-telemetry/opentelemetry-collector-releases
 WORKDIR /
 RUN <<-EOF
