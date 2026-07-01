@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.22-labs
+# syntax=docker/dockerfile:1.25-labs
 
 FROM --platform=linux/amd64 debian:trixie-slim as builder
 ARG TARGETPLATFORM
