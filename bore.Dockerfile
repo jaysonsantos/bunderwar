@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 
-FROM --platform=${BUILDPLATFORM} rust:1.97.0-slim-trixie as builder
+FROM --platform=${BUILDPLATFORM} rust:1.97.1-slim-trixie as builder
 ARG TARGETPLATFORM
 
 # renovate datasource=github-tags depName=ekzhang/bore
