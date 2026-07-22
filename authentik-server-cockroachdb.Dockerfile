@@ -1,4 +1,4 @@
-ARG AUTHENTIK_VERSION=2026.5.5
+ARG AUTHENTIK_VERSION=2026.5.6
 FROM ghcr.io/goauthentik/server:${AUTHENTIK_VERSION}
 
 LABEL org.opencontainers.image.title="authentik-server-cockroachdb" \
