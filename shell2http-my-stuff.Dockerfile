@@ -1,3 +1,5 @@
+# Image version is independent from the upstream shell2http dependency version.
+ARG IMAGE_VERSION=1.17.1
 # renovate datasource=docker depName=msoap/shell2http
 ARG SHELL2HTTP_VERSION=1.17.0
 # renovate datasource=github-releases depName=astral-sh/uv
@@ -19,7 +21,10 @@ RUN apk add -U \
     jo \
     file \
     curl \
+    tini \
  && curl -LsSf "https://astral.sh/uv/${UV_VERSION}/install.sh" \
     | env UV_UNMANAGED_INSTALL=/usr/local/bin sh
+
+ENTRYPOINT ["/sbin/tini", "--", "/app/shell2http"]
 
 # Rebuild trigger for annotation support
