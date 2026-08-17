@@ -35,6 +35,10 @@ FROM gcr.io/distroless/static:nonroot
 ARG TARGETPLATFORM
 COPY --from=builder --chmod=755 /build/${TARGETPLATFORM} /usr/local/bin/
 
+LABEL org.opencontainers.image.title="redis" \
+      org.opencontainers.image.description="In-memory data structure store for caching, messaging, and real-time applications" \
+      org.opencontainers.image.source="https://github.com/jaysonsantos/bunderwar"
+
 RUN ["/usr/local/bin/redis-server", "--version"]
 ENTRYPOINT [ "/usr/local/bin/redis-server" ]
 CMD ["/etc/redis/external.conf.d/redis-external.conf"]
