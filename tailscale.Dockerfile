@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.22-labs
 ARG PLATFORMS=linux/arm/v7
-FROM --platform=${BUILDPLATFORM} golang:1.26-trixie as builder
+FROM --platform=${BUILDPLATFORM} golang:1.27-trixie as builder
 ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG TARGETVARIANT
