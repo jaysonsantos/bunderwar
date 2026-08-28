@@ -3,7 +3,7 @@ ARG IMAGE_VERSION=1.17.1
 # renovate datasource=docker depName=msoap/shell2http
 ARG SHELL2HTTP_VERSION=1.17.0
 # renovate datasource=github-releases depName=astral-sh/uv
-ARG UV_VERSION=0.12.6
+ARG UV_VERSION=0.12.7
 
 FROM msoap/shell2http:${SHELL2HTTP_VERSION}
 
