@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.22-labs
+# syntax=docker/dockerfile:1.27-labs
 
 FROM --platform=${BUILDPLATFORM} rust:1.98.0-slim-trixie as builder
 ARG TARGETPLATFORM
