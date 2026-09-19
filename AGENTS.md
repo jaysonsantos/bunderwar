@@ -39,8 +39,7 @@ This repository builds personal Docker images for `linux/amd64` and `linux/arm64
 5. On a pull request, no job pushes an image.
    - For a Dockerfile, `build.py` makes one job for each platform.
    - For an Earthfile, `build.py` makes one job. The `+all` target builds `linux/amd64` and `linux/arm64` in that job.
-6. `merge-manifests` has a `main` condition. On `main`, `build.py` writes an empty `merge_matrix`, so the job does not run.
-7. `guard` fails if a job before it failed. Use `guard` as the required status check.
+6. `guard` fails if a job before it failed. Use `guard` as the required status check.
 
 A change to a support file only (for example `komga/root/...`) does not start a build. To build the image again, also change its Dockerfile, or start the workflow manually with the `manual_files` glob input.
 
