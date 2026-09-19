@@ -36,7 +36,9 @@ This repository builds personal Docker images for `linux/amd64` and `linux/arm64
 2. `build.py` skips each file that is not a `*.Dockerfile` or an `Earthfile`.
 3. `run-builds` runs one matrix job for each build command.
 4. On `main`, CI sets `PUSH_IMAGE=1`, and each job pushes a multi-platform image.
-5. On a pull request, each job builds one platform and pushes nothing. `merge-manifests` runs only on `main`.
+5. On a pull request, no job pushes an image.
+   - For a Dockerfile, `build.py` makes one job for each platform.
+   - For an Earthfile, `build.py` makes one job. The `+all` target builds `linux/amd64` and `linux/arm64` in that job.
 6. `guard` fails if a job before it failed. Use `guard` as the required status check.
 
 A change to a support file only (for example `komga/root/...`) does not start a build. To build the image again, also change its Dockerfile, or start the workflow manually with the `manual_files` glob input.
@@ -67,10 +69,13 @@ Each image directory contains a small Earthfile. That Earthfile sets arguments a
 
 ## Conventions
 
-- Most Dockerfiles follow one pattern:
-  - An amd64 builder stage downloads or cross-compiles the binary for `${TARGETPLATFORM}`. Some images use `zig cc` for this.
+- Most Dockerfiles have two stages:
+  - A builder stage downloads or compiles the binary.
   - The final stage copies the binary into a distroless or minimal image.
-  - A `RUN ["<binary>", "--version"]` step in the final stage checks the binary on each platform.
+- Some builder stages set `--platform` and cross-compile for `${TARGETPLATFORM}`. `redis.Dockerfile` and `valkey.Dockerfile` use `zig cc` for this.
+- Only `cloudflared.Dockerfile`, `redis.Dockerfile`, and `valkey.Dockerfile` have a `RUN ["<binary>", "--version"]` step in the final stage. This step checks the binary on each platform.
+  - For all other images, a successful build does not show that the binary starts.
+  - Add this step to a new image when the final image can run the binary.
 - Use heredoc `RUN <<-EOF` blocks or `&&` chains. Do the same as the adjacent files.
 - Keep the base image tags explicit. Renovate updates them.
 - Use short lowercase names with hyphens for new images and for new `earthly/` directories.
