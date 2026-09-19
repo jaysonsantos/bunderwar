@@ -1,0 +1,37 @@
+VERSION --shell-out-anywhere 0.6
+FROM ghcr.io/graalvm/graalvm-ce:ol9-java17
+
+# CurseForge project 1082278, "Biohazard: Project Genesis". The FTB installer does not install CurseForge packs.
+# SERVER_PACK_URL is the server pack that the author publishes with the client file of the same release.
+ARG MOD_VERSION=0.4.6.1
+ARG SERVER_PACK_URL=https://edge.forgecdn.net/files/8869/15/Biohazard_Beta_0.4.6.1_server_pack.zip
+# Keep these two values equal to MINECRAFT_VERSION and MODLOADER_VERSION in the variables.txt of the server pack.
+ARG MINECRAFT_RELEASE=1.20.1
+ARG FORGE_RELEASE=47.4.0
+ARG NAME=biohazard-project-genesis
+
+install:
+    ENV FORGE_INSTALLER_URL=https://maven.minecraftforge.net/net/minecraftforge/forge/${MINECRAFT_RELEASE}-${FORGE_RELEASE}/forge-${MINECRAFT_RELEASE}-${FORGE_RELEASE}-installer.jar
+    WORKDIR /mc
+    RUN echo Downloading from ${SERVER_PACK_URL}
+    RUN curl --fail -sLo /server-pack.zip ${SERVER_PACK_URL} && jar xf /server-pack.zip && rm /server-pack.zip
+    RUN grep -q "^MINECRAFT_VERSION=${MINECRAFT_RELEASE}$" variables.txt && grep -q "^MODLOADER_VERSION=${FORGE_RELEASE}$" variables.txt
+    RUN curl --fail -sLo forge-installer.jar ${FORGE_INSTALLER_URL} && java -jar forge-installer.jar --installServer && rm -f forge-installer.jar forge-installer.jar.log
+    # The image has Java and Forge, thus the ServerPackCreator start scripts are not necessary.
+    RUN rm -f start.sh start.ps1 start.bat run.bat install_java.sh install_java.ps1 variables.txt HOW-TO-RUN.md
+    RUN echo eula=true > eula.txt
+    RUN sed -i'' 's/^java /exec java $JAVA_OPTIONS /' ./run.sh
+    RUN grep -q '^exec java \$JAVA_OPTIONS ' ./run.sh
+    SAVE ARTIFACT /mc
+
+image:
+    COPY +install/mc /mc
+    WORKDIR /mc
+    CMD exec sh ./run.sh nogui
+    EXPOSE 25565
+    VOLUME /mc/world
+    SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${NAME}-latest
+    SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${NAME}-${MOD_VERSION}
+
+all:
+    BUILD --platform=linux/amd64 --platform=linux/arm64 +image
