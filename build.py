@@ -102,18 +102,6 @@ class Image:
             ]
         return [self._build_dockerfile(full_tag, platforms, push_arg)]
 
-    def get_manifest_entry(self):
-        if self._is_earthfile():
-            return None
-        full_tag = self.full_tag()
-        platforms = self.get_platforms()
-        return dict(
-            image=full_tag,
-            sources=[
-                f"{full_tag}-{platform_suffix(platform)}" for platform in platforms
-            ],
-        )
-
     def _is_earthfile(self):
         return self.dockerfile.name == EARTHFILE
 
@@ -166,7 +154,6 @@ class Image:
 
 def build(images, push: bool, output_matrix: bool):
     commands = []
-    manifests = []
     split_platform_builds = output_matrix and not push
     for image in get_images(images):
         if not image.version:
@@ -178,11 +165,7 @@ def build(images, push: bool, output_matrix: bool):
         commands.extend(
             image.get_build_commands(push, split_platforms=split_platform_builds)
         )
-        if split_platform_builds:
-            manifest = image.get_manifest_entry()
-            if manifest:
-                manifests.append(manifest)
-    run_build_commands(commands, manifests, output_matrix)
+    run_build_commands(commands, output_matrix)
 
 
 def get_images(names) -> Iterator[Image]:
@@ -197,7 +180,7 @@ def all_images():
     return glob.glob("**/*.Dockerfile", recursive=True)
 
 
-def run_build_commands(calls, manifests, output_matrix):
+def run_build_commands(calls, output_matrix):
     if not output_matrix:
         return run_serial_commands(calls)
 
@@ -206,9 +189,6 @@ def run_build_commands(calls, manifests, output_matrix):
     matrix = dict(include=calls)
     with open(os.environ["GITHUB_OUTPUT"], "a") as output:
         output.write(f"matrix={json.dumps(matrix, separators=(',', ':'))}\n")
-        output.write(
-            f"merge_matrix={json.dumps(dict(include=manifests), separators=(',', ':'))}\n"
-        )
 
 
 def run_serial_commands(calls):
