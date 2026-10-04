@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.22-labs
+# syntax=docker/dockerfile:1.27-labs
 
 FROM --platform=linux/amd64 golang:1.27-trixie as builder
 ARG TARGETPLATFORM
