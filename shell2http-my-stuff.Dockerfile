@@ -1,7 +1,7 @@
 # Image version is independent from the upstream shell2http dependency version.
 ARG IMAGE_VERSION=1.17.1
 # renovate datasource=docker depName=msoap/shell2http
-ARG SHELL2HTTP_VERSION=1.17.0
+ARG SHELL2HTTP_VERSION=1.18.0
 # renovate datasource=github-releases depName=astral-sh/uv
 ARG UV_VERSION=0.13.0
 
