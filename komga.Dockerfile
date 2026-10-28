@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # renovate datasource=github-releases depName=gotson/komga
-ARG KOMGA_VERSION=1.29.1
+ARG KOMGA_VERSION=1.29.2
 # renovate datasource=github-releases depName=rclone/rclone
 ARG RCLONE_VERSION=1.75.2
 FROM ghcr.io/gotson/komga:${KOMGA_VERSION} AS komga
