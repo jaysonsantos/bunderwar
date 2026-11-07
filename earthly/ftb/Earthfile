@@ -35,8 +35,9 @@ all:
 
 # The -v2 targets use the installer of api.feed-the-beast.com. Packs that are not in api.modpacks.ch need them.
 install-v2:
+    ARG JAVA_IMAGE=ghcr.io/graalvm/graalvm-community
     ARG JAVA_RELEASE=21
-    FROM ghcr.io/graalvm/graalvm-community:${JAVA_RELEASE}
+    FROM ${JAVA_IMAGE}:${JAVA_RELEASE}
     ENV suffix=$(test ${TARGETARCH} = 'arm64' && echo arm/ || true)
     ENV DOWNLOAD_URL=https://api.feed-the-beast.com/v1/modpacks/public/modpack/${MOD_ID}/${MOD_VERSION}/server/${suffix}linux
     RUN echo Downloading from ${DOWNLOAD_URL}
@@ -45,14 +46,17 @@ install-v2:
     RUN rm -rf /installer /mc/*-installer.jar.log
     WORKDIR /mc
     RUN echo eula=true > eula.txt
-    RUN sed -i'' 's/^java /exec java $JAVA_OPTIONS /' ./run.sh
-    RUN grep -q '^exec java \$JAVA_OPTIONS ' ./run.sh
+    # Some installers write "java ...", others write "exec java ...". Put $JAVA_OPTIONS after
+    # @user_jvm_args.txt, so that a -Xmx in JAVA_OPTIONS replaces the -Xmx of the pack.
+    RUN sed -E -i'' 's/^(exec )?java (@user_jvm_args\.txt )?/exec java \2$JAVA_OPTIONS /' ./run.sh
+    RUN grep -qE '^exec java (@user_jvm_args\.txt )?\$JAVA_OPTIONS ' ./run.sh
     SAVE ARTIFACT /mc
 
 image-v2:
+    ARG JAVA_IMAGE=ghcr.io/graalvm/graalvm-community
     ARG JAVA_RELEASE=21
-    FROM ghcr.io/graalvm/graalvm-community:${JAVA_RELEASE}
-    COPY (+install-v2/mc --JAVA_RELEASE=$JAVA_RELEASE) /mc
+    FROM ${JAVA_IMAGE}:${JAVA_RELEASE}
+    COPY (+install-v2/mc --JAVA_IMAGE=$JAVA_IMAGE --JAVA_RELEASE=$JAVA_RELEASE) /mc
     WORKDIR /mc
     CMD exec sh ./run.sh
     EXPOSE 25565
@@ -61,5 +65,6 @@ image-v2:
     SAVE IMAGE --push ghcr.io/jaysonsantos/bunderwar:${NAME}${name_suffix}-${MOD_VERSION}
 
 all-v2:
+    ARG JAVA_IMAGE=ghcr.io/graalvm/graalvm-community
     ARG JAVA_RELEASE=21
-    BUILD --platform=linux/amd64 --platform=linux/arm64 +image-v2 --JAVA_RELEASE=$JAVA_RELEASE
+    BUILD --platform=linux/amd64 --platform=linux/arm64 +image-v2 --JAVA_IMAGE=$JAVA_IMAGE --JAVA_RELEASE=$JAVA_RELEASE
